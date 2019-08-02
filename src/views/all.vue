@@ -5,7 +5,7 @@
             <div class="sect1-block4">
                 <h2>Самые продаваемые</h2>
                 <input type="text" v-model="src">
-                <div class="s1-block2-grid">
+                <div class="s1-block4-grid">
                     <div v-for="(item, index) in filteredGoods" :key="index">
                         <best-goods :bestGoods="item"></best-goods>
                     </div>
@@ -25,7 +25,7 @@
                         <button @click.prevent="nextPage()" :disabled="pageNumber >= pageCount -1" >&gt;</button>
                     </div>
                 </div>
-                <p>Всего {{length}} товаров</p>
+                <p style="float:right;">Всего {{length}} товаров</p>
             </div>
         </div>
     </div>
@@ -45,7 +45,8 @@
                 pageCount: 0,
                 currentPage: 0,
                 size: 8,
-                length: 0
+                length: 0,
+                windowWidth: window.innerWidth
             }
         },
         computed: {
@@ -54,6 +55,9 @@
             },
             filteredGoods(){
                 let allGood = this.allGood
+                if(this.windowWidth < 947){
+                    this.size 
+                }
                 const start = this.pageNumber * this.size,
                     end = start*1.0 + this.size*1.0;
                 this.length = allGood.length
@@ -65,17 +69,13 @@
                     b.title.toLowerCase().indexOf(this.src.toLowerCase()) >= 0)
                     this.pageNumber = 0
                 }
-                
-                console.log(allGood.length)
                 return allGood.slice(start, end)
             },
-            // pageCount(){
-            //     let l = this.length;
-            //     return Math.floor(l/5);
-            // },
-            // currentPage(){
-            //     return Math.floor(this.length/this.size)
-            // }
+        },
+        mounted () {
+            window.onresize = () => {
+                this.windowWidth = window.innerWidth
+            };
         },
         methods: {
             prevPage(){
@@ -97,6 +97,38 @@
         width: 75%;
     }
     .all-pagination{
+        margin-top: 10px;
         display: flex;
+        justify-content: flex-end;
+    }
+    .all-pagination button, .all-pagination .current{
+        padding: 0 20px;
+        max-width: 160px;
+        background-color: transparent;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        text-decoration: none;
+        margin: 0 6px;
+        transition: all .2s ease-in-out;
+    }
+    .all-pagination button, .all-pagination span {
+        text-align: center;
+        font-family: Helvetica, Arial, sans-serif;
+        font-weight: 300;
+        line-height: 42px;
+        height: 44px;
+        color: #999;
+        font-size: 18px;
+    }
+    .all-pagination button:hover {
+        border-color: #ea4c89;
+        color: #ea4c89;
+    }
+    .all-pagination .current {
+        border-color: #ea4c89;
+        color: #ea4c89;
+    }
+    .all-pagination .left button, .all-pagination .right button{
+        border: none;
     }
 </style>

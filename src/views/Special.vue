@@ -35,7 +35,7 @@
                 specialOK: false,
                 inputCheck: false,
                 specialName:  null,
-                specialPhone: null
+                specialPhone: null,
             }
         },
         methods: {
@@ -46,7 +46,7 @@
                 }
                 console.log(this.specialName)
             }
-        },
+        }
     }
 </script>
 
@@ -76,5 +76,25 @@
     }
     .ss-content-follow form button:disabled{
         background: rgb(111, 166, 248);
+    }
+    @media (max-width: 947px){
+        .ss-content {
+            width: 50%;
+        }       
+    }
+    @media (max-width: 768px){
+        .ss-content {
+            width: 60%;
+        }       
+    }
+    @media (max-width: 579px){
+        .ss-content {
+            width: 70%;
+        }       
+    }
+    @media (max-width: 450px){
+        .ss-content {
+            width: 80%;
+        }       
     }
 </style>

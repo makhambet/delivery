@@ -1,6 +1,6 @@
 <template>
     <div class="sb-grid-content">
-        <div class="sb-block1-img">
+        <div class="s-grid-block-img">
             <img :src="cartGoods.img" alt="">
         </div>
         <div class="sb-block1-title">
@@ -12,7 +12,7 @@
                     <p><strong>{{cartGoods.price}} теңге</strong></p>
                 </div>
                 <div class="grid-counter">
-                    <button :disabled="cartGoods.count<=1 ? '' : disabled"  @click.prevent="pred()" class="counter">&lt;</button>{{cartGoods.count}}<button @click="next()" class="counter">&gt;</button>
+                    <button :disabled="cartGoods.count<=1"  @click.prevent="pred()" class="counter">&lt;</button>{{cartGoods.count}}<button @click="next()" class="counter">&gt;</button>
                 </div>
             </div>
         </div>

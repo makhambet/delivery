@@ -42,6 +42,7 @@ export default new Router({
     {
       path: '/good:id',
       name: 'good',
+      props: true,
       component: Good
     },
     {

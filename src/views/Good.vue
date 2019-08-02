@@ -1,44 +1,44 @@
 <template>
-    <section class="sect-tovar" id="app">
+    <section class="sect-tovar" id="app" v-if="good">
         <div class="wrapper">
             <small>
-                Главная > Результат поиска > <span class="now-page">BB-cream</span>
+                Главная > Результат поиска > <span class="now-page">{{good.title}}</span>
             </small>
             <div class="goods">
                 <div class="goods-block1">
                     <div class="g-block1-img">
-                        <img src="../assets/images/image.png" alt="">
+                        <img :src="good.img" alt="">
                     </div>
                     <div class="g-block1-img">
-                        <img src="../assets/images/image.png" alt="">
+                        <!-- <img :src="good.img" alt=""> -->
                     </div>
                     <div class="g-block1-img">
-                        <img src="../assets/images/image.png" alt="">
+                        <!-- <img :src="good.img" alt=""> -->
                     </div>
                     <div class="g-block1-img">
-                        <img src="../assets/images/image.png" alt="">
+                        <!-- <img :src="good.img" alt=""> -->
                     </div>
                 </div>
                 <div class="goods-block2">
                     <div class="g-block2-img">
-                        <img src="../assets/images/image.png" alt="">
+                        <!-- <img :src="good.img" alt=""> -->
                     </div>
                 </div>
                 <div class="goods-block3">
-                    <h2>BB-cream для рук</h2>
-                    <div class="heart">
+                    <h2>{{good.title}}</h2>
+                    <div @click="good.heart = !good.heart" class="heart" :class="{chosen: good.heart}">
                         <i class="fas fa-heart"></i>
                     </div>
                     <div class="g-block3-content">
                         <div class="g-content-left">
                             <button class="allBtn">В корзину</button>
                             <div class="grid-counter">
-                                <span :disabled="counter===0"  @click.prevent="counter--" class="counter">&lt;</span>{{counter}}<span @click="counter++" class="counter">&gt;</span>
+                                <span :disabled="good.count<=1"  @click.prevent="pred()" class="counter">&lt;</span>{{good.count}}<span @click="next()" class="counter">&gt;</span>
                             </div>
                         </div>
                         <div class="g-block3-price">
                             <small>Цена</small><br>
-                            <span>{{total_price}} теңге</span>
+                            <span>{{good.price}} теңге</span>
                         </div>
                     </div>
                     <h4>Описание</h4>
@@ -56,7 +56,7 @@
             <div class="s1-block2-grid">
                 <div class="pred">&lt;</div>
                 <div class="s1-grid-prod" v-for="(item, index) in 6" :key="index">
-                    <div class="chosen"  @click="heart=!heart" :class="{heartActive: heart }">
+                    <div class="chosen"  @click="good.heart=!good.heart" :class="{heartActive: good.heart }">
                         <i class="fas fa-heart"></i>
                     </div>
                     <img src="../assets/images/image.png" alt=""><br>
@@ -77,10 +77,30 @@
 
 <script>
     export default {
-        
+        props:{
+            'id':{
+                type: String,
+                required: true
+            }
+        },
+        computed: {
+            good() {
+                return this.$store.getters.getGoods.find(b=>b.id ==this.id)
+            }
+        },
+        methods: {
+            next() {
+                this.good.count++
+            },
+            pred() {
+                this.good.count--
+            }
+        },
     }
 </script>
 
 <style scoped>
-
+    .heart{
+        font-size: 20px;
+    }
 </style>

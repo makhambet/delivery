@@ -57,6 +57,7 @@
             </div>
         </section>
         <section class="sect1"  id="app">
+            {{sizing()}}
             <div class="wrapper">
                 <small>
                     Главная > <span class="now-page">Самые продаваемые</span>
@@ -65,36 +66,22 @@
                     <app-menu></app-menu>
                     <div class="sect1-block2">
                         <h2>Самые продаваемые</h2>
-                        <div class="s1-block2-rel">
+                        <div class="sect1-block2-carousel">
                             <div class="all"><router-link to="/all">Все</router-link></div>
-                            <button  :disabled="page<=0"  @click.prevent="pred()" class="pred">&lt;</button>
-                            <div class="s1-block2-grid">
-                                <div v-for="(item, index) in bests" :key="index">
+                            <carousel :perPage="1" :perPageCustom="[[360,1], [480, 2], [768, 3], [947,4], [1200,5]]" :touchDrag="false" :paginationSize="0" :mouse-drag="true" :loop="true" :autoplay="false" :navigationEnabled="true">
+                                <slide  v-for="(item, index) in goods" :key="index">
                                     <best-goods :bestGoods="item"></best-goods>
-                                </div>
-                            </div>
-                            <button :disabled="nextEnd" @click="next()" class="next">&gt;</button>
-                        </div>
-                        <div class="s1-block2-rel">
-                            <div class="all"><router-link to="/all">Все</router-link></div>
-                            <button  :disabled="page<=0"  @click.prevent="pred()" class="pred">&lt;</button>
-                            <div class="s1-block2-grid">
-                                <div v-for="(item, index) in allGoods" :key="index">
-                                    <best-goods :bestGoods="item"></best-goods>
-                                </div>
-                            </div>
-                            <button :disabled="nextEnd" @click="next()" class="next">&gt;</button>
+                                </slide>
+                            </carousel>
                         </div>
                         <h2>Бытовая химия</h2>
-                        <div class="s1-block2-rel">
+                        <div class="sect1-block2-carousel">
                             <div class="all"><router-link to="/all">Все</router-link></div>
-                            <button  :disabled="page<=0"  @click.prevent="pred()" class="pred">&lt;</button>
-                            <div class="s1-block2-grid">
-                                <div v-for="(item, index) in allGoods" :key="index">
+                            <carousel :perPage="1" :perPageCustom="[[360,1], [480, 2], [768, 3], [947,4], [1200,5]]" :touchDrag="false" :paginationSize="0" :mouse-drag="true" :loop="true" :autoplay="false" :navigationEnabled="true">
+                                <slide  v-for="(item, index) in goods" :key="index">
                                     <best-goods :bestGoods="item"></best-goods>
-                                </div>
-                            </div>
-                            <button :disabled="nextEnd" @click="next()" class="next">&gt;</button>
+                                </slide>
+                            </carousel>
                         </div>
                         <div class="special">
                             <div class="special-block1">
@@ -119,21 +106,33 @@
 <script>
     import BestGoods from '../components/BestItems'
     import AppMenu from '../components/AppMenu'
+    import { Carousel, Slide } from 'vue-carousel';
     export default {
         data() {
             return {
                 page: 0,
                 nextEnd: false,
-                bests: []
+                bests: [],
+                size: 5
             }
         },
         methods: {            
             next(){
                 this.page++
             },
+            sizing(){
+                let w = window.innerWidth;
+                if(w<=947){
+                    this.size = 4
+                }
+                console.log("1")
+            },
             pred(){
                 this.page--
             }
+        },
+        mounted () {
+            this.sizing();
         },
         computed: {
             goods() {
@@ -142,8 +141,9 @@
             allGoods(){
                 let goods = this.goods;
                 let lenght = goods.length;
-                let a = this.page*5;
-                let b = this.page*5 + 5;
+                let size = 5
+                let a = this.page;
+                let b = this.page+this.size;
                 if(b>=lenght) {
                     this.nextEnd = true
                     console.log(this.nextEnd)
@@ -158,7 +158,9 @@
         },
         components: {
             BestGoods,
-            AppMenu
+            AppMenu,
+            Carousel,
+            Slide
         },
     }
 </script>
@@ -168,5 +170,10 @@
         -moz-appearance: none;
         -webkit-appearance: none;
         appearance: none;
+    }
+    .sect1-block2-carousel{
+        position: relative;
+        width: 90%;
+        margin: 0 auto;
     }
 </style>

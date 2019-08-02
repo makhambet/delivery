@@ -1,7 +1,7 @@
 <template>
     <div class="footer">
         <div class="wrapper">
-            <div class="footer-block1">
+            <div class="footer-block1 f-blc1">
                 <nav class="f-block1-menu">
                     <ul>
                         <li v-for="(menu, index) in menus" :key="index">
@@ -10,7 +10,7 @@
                     </ul>
                 </nav>
             </div>
-            <div class="footer-block2">
+            <div class="footer-block2 f-blc2">
                 <p>Телефон доставки в г.Алматы: <br> 
                     <a href="#">+7(727) 346 85 83</a>
                 </p>

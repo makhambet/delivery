@@ -1,6 +1,6 @@
 <template>
     <div class="sc-grid-block">
-        <div class="sc-block-img">
+        <div class="s-grid-block-img">
             <img :src="chosenGoods.img" alt="">
         </div>
         <div class="sc-grid-content">
@@ -12,15 +12,16 @@
             <p>{{chosenGoods.price}} теңге</p>
             <div class="sc-grid-flex">
                 <div class="grid-counter">
-                    <button :disabled="chosenGoods.count<=1 ? '' : disabled"  @click.prevent="pred()" class="counter">&lt;</button>{{chosenGoods.count}}<button @click="next()" class="counter">&gt;</button>
+                    <button :disabled="chosenGoods.count<=1"  @click.prevent="pred()" class="counter">&lt;</button>{{chosenGoods.count}}<button @click="next()" class="counter">&gt;</button>
                 </div>
-                <button class="allBtn">В корзину</button>
+                <button @click="add(chosenGoods)" class="allBtn">В корзину</button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+    import cart from '../help/cart'
     export default {
         props: {
             chosenGoods: {
@@ -35,13 +36,19 @@
             },
             next(){
                 this.chosenGoods.count++;
+            },
+            add(e){
+                console.log(cart.cart)
+                cart.cart.push(e)
+                console.log(cart.cart)
             }
+        },
+        created () {
+            console.log(cart.cart);
         },
     }
 </script>
 
 <style scoped>
-    .sc-grid-block{
-        max-width: 430px;
-    }
+    
 </style>
