@@ -126,6 +126,36 @@ export default new Vuex.Store({
         type: 'best',
         id:12
       },
+    ],
+    order:[
+      {
+        title: 'Особый заказ',
+        number: '№12876395',
+        date: '24.05.19',
+        status: 'Ожидает доставки',
+        statusClass: '#FFC000'
+      },
+      {
+        title: 'Заказ',
+        number: '№12876395',
+        date: '24.05.19',
+        status: 'Ожидает доставки',
+        statusClass: '#FFC000'
+      },
+      {
+        title: 'Заказ',
+        number: '№12876395',
+        date: '24.05.19',
+        status: 'Доставлен',
+        statusClass: '#23DA98'
+      },
+      {
+        title: 'Заказ',
+        number: '№12876395',
+        date: '24.05.19',
+        status: 'Отменен',
+        statusClass: '#FF3D3D'
+      },
     ]
   },
   mutations: {
@@ -135,6 +165,7 @@ export default new Vuex.Store({
     
   },
   getters: {
-    getGoods: (state) =>state.goods
+    getGoods: (state) =>state.goods,
+    getOrder: (state) =>state.order
   }
 })

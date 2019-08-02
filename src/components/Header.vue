@@ -68,7 +68,7 @@
                     },
                     {
                         title: 'Заказы',
-                        route: '/'
+                        route: '/order'
                     },
                     {
                         title: 'Товары',

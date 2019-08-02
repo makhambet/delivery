@@ -11,7 +11,8 @@ import Special from './views/Special.vue'
 import Payment from './views/Payment.vue'
 import Confirm from './views/Confirm.vue'
 import Registr from './views/Registr.vue'
-import All from './views/all.vue'
+import All from './views/All.vue'
+import Order from './views/Ordering.vue'
 
 Vue.use(Router)
 
@@ -79,6 +80,11 @@ export default new Router({
       path: '/all',
       name: 'all',
       component: All
-    },    
+    },
+    {
+      path: '/order',
+      name: 'order',
+      component: Order
+    }, 
   ]
 })
