@@ -1,5 +1,6 @@
 export default({
-    counter: 2,
+    counter: 0,
     searchInput: '',
-    cart: []
+    cart: [],
+    totalPrice: 0
 })
