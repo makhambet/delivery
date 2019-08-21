@@ -1,18 +1,26 @@
 <template>
     <div class="sb-grid-content">
-        <div class="s-grid-block-img">
-            <img :src="cartGoods.img" alt="">
+        <div v-for="img in cartGoods.product.images" :key="img.id" class="s-grid-block-img">
+            <img :src="img" alt="">
         </div>
         <div class="sb-block1-title">
-            <p>{{cartGoods.title}}</p>
-            <div class="delete"><i class="far fa-trash-alt"></i></div>
+            <p>{{cartGoods.product.name}}</p>
+            <div v-on:click="$emit('remove')" class="delete"><i class="far fa-trash-alt"></i></div>
             <div class="sb-content-flex">
                 <div class="sb-flex-left">
                     <small>Стоимость</small>
-                    <p><strong>{{cartGoods.price}} теңге</strong></p>
+                    <p><strong>{{cartGoods.product.price}} теңге</strong></p>
                 </div>
                 <div class="grid-counter">
-                    <button :disabled="cartGoods.count<=1"  @click.prevent="pred()" class="counter">&lt;</button>{{cartGoods.count}}<button @click="next()" class="counter">&gt;</button>
+                    <button 
+                        :disabled="cartGoods.count<=1"  
+                        @click.prevent="pred()" class="counter"
+                    >
+                        &lt;
+                    </button>{{cartGoods.count}}<button
+                        @click="next(), add(cartGoods.product.id)" 
+                        class="counter"
+                    >&gt;</button>
                 </div>
             </div>
         </div>
@@ -20,25 +28,34 @@
 </template>
 
 <script>
+    import nextPredBtn from '../mixins/nextPredBtn'
+    import axios from 'axios'
     export default {
+        mixins: [nextPredBtn],
+        data() {
+            return {
+                countBtn: 'cartGoods'
+            }
+        },
         props: {
             cartGoods: {
                 type: Object,
                 required: true,
                 countDis: false
-            },
+            }
         },
         methods: {
-            pred(){
-                this.cartGoods.count--;
-            },
-            next(){
-                this.cartGoods.count++;
-            },
             counterDisabled(){
                 if(this.cartGoods.count <=1){
                     this.countDis = true
                 }
+            },
+            add(id){
+                console.log(id)
+                this.$store.dispatch('POST_ADD_BASKET', {
+                    product_id: id,
+                    count: 1
+                })
             }
         },
     }

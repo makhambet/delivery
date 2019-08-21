@@ -22,7 +22,14 @@
 
 <script>
     import cart from '../help/cart'
+    import nextPredBtn from '../mixins/nextPredBtn'
     export default {
+        mixins: [nextPredBtn],
+        data() {
+            return {
+                countBtn: 'chosenGoods'
+            }
+        },
         props: {
             chosenGoods: {
                 type: Object,
@@ -31,20 +38,10 @@
             },
         },
         methods: {
-            pred(){
-                this.chosenGoods.count--;
-            },
-            next(){
-                this.chosenGoods.count++;
-            },
             add(e){
-                console.log(cart.cart)
                 cart.cart.push(e)
-                console.log(cart.cart)
+                cart.counter++
             }
-        },
-        created () {
-            console.log(cart.cart);
         },
     }
 </script>

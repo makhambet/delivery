@@ -27,7 +27,10 @@
             <div class="footer-block2">
                     Website design by <a href="http://1-000.kz/">Thousand Kazakhstan</a>
                 <div class="f-block2-social">
-
+                    <a target="_blank" href="https://www.instagram.com/"><img src="../assets/images/instagram.png" alt=""></a>
+                    <a target="_blank" href="https://www.vk.com/all_feed"><img src="../assets/images/vk-social-network-logo.png" alt=""></a>
+                    <a target="_blank" href="https://play.google.com/store"><img src="../assets/images/qpm.png" alt=""></a>
+                    <a target="_blank" href="https://www.apple.com/ru/ios/app-store/"><img src="../assets/images/qas.png" alt=""></a>
                 </div>
             </div>
         </div>
