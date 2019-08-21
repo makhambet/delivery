@@ -5,13 +5,13 @@
             <h2>Корзина</h2>
             <div v-if="!isIfEmpty" class="sb-grid">
                 <div class="sb-grid-block1">
-                    <div v-for="(item, i) in carts" :key="i">
-                        <cart-good :cartGoods="item"></cart-good>
+                    <div v-for="(item, i) in BASKET_LIST" :key="i">
+                        <cart-good @remove="removeBasket(item)" :cartGoods="item"></cart-good>
                     </div>
                 </div>
                 <div class="sb-grid-block2">
                     <div class="sb-block2-bottom">
-                        <p>Итоговая сумма: <br> <span class="price">20 000 теңге</span></p>
+                        <p>Итоговая сумма: <br> <span class="price">{{total_price()}} теңге</span></p>
                         <router-link :to="'/registr'"><button class="allBtn">Оформить заказ</button></router-link>
                     </div>
                 </div>
@@ -26,40 +26,85 @@
 
 <script>
     import CartGood from '../components/CartItems.vue'
-    import cart from '../help/cart'
+    import {mapGetters} from 'vuex'
+    import axios from 'axios'
+    import user from '../help/user_id'
     export default {
         data() {
             return {
                 isIfEmpty: false,
                 counter: 1,
                 cartGood: [],
-                carts: []
             }
         },
         computed: {
-            goods(){
-                return this.$store.getters.getGoods
-            }
-        },
-        created () {
-            console.log(cart.cart);
+            ...mapGetters([
+                'BASKET_LIST',
+                'BASKET_COUNT'
+            ]),
+            filterChosen(){
+                let goods = this.BASKET_LIST;
+                goods = goods.filter(b=> b.in_basket === true)
+                return goods
+            },
         },
         methods: {
-            isEmpty() {
-                console.log(" cart = " + cart.cart)
-                if(this.carts.length <= 0) {
-                    this.isIfEmpty = true
+            removeBasket(id){
+                if(user.token === null || user.token === 'null'){
+                    console.log('Адрес не удален')
                 }
                 else{
-                    this.isIfEmpty = false
+                    axios.post('http://localhost:8080/api/basket/delete', {
+                        "basket_id": id.basket_id
+                    },
+                    {
+                        headers: {
+                            "token": user.token
+                        },
+                    })
+                    .then(response => { 
+                        console.log(response)
+                        this.$store.dispatch('GET_BASKET_LIST')
+                    })
+                    .catch(error => {
+                        console.log(error.response)
+                    });
+                }
+            },
+            isEmpty() {
+                // this.$store.dispatch('GET_BASKET_LIST')
+                // this.$store.getters.BASKET_COUNT
+                // console.log(this.BASKET_COUNT)
+                // if(this.BASKET_COUNT === 0){
+                //     this.isIfEmpty = true
+                // }
+                // else{
+                //     this.isIfEmpty = false
+                // }
+            },
+            total_price(){
+                if(this.BASKET_COUNT > 0){
+                    let len = this.BASKET_LIST.length
+                    let totalPrice = 0
+                    for(let i=0; i<len; i++){
+                        totalPrice += this.BASKET_LIST[i].count * this.BASKET_LIST[i].product.price
+                    }
+                    localStorage.totalPrice = totalPrice
+                    return totalPrice
+                }
+                else{
+                    return '0'
                 }
             }
+        },
+        components: {
+            CartGood,
         },
         mounted () {
             this.isEmpty();
         },
-        components: {
-            CartGood,
+        created () {
+            this.$store.dispatch('GET_BASKET_LIST')
         },
     }
 </script>
@@ -70,9 +115,11 @@
         display: flex;
         justify-content: space-around;
         color: #515C6F;
+        min-height: 20vh;
     }
     .sb-block1-title{
         position: relative;
+        width: 50%;
     }
     .sb-grid .sb-grid-block1{
         width: 48%;
@@ -91,7 +138,7 @@
     }
     .sb-grid .sb-grid-content{
         box-shadow: 0 8px 15px #E7EAF0;
-        padding: 2px 20px 7px 10px;
+        padding: 10px 20px 10px 10px;
     }
     .sb-grid .sb-block1-img{
         max-width: 100px;
@@ -144,7 +191,6 @@
         text-align: center;
         width: 30%;
         margin: 0 auto;
-        height: 40%;
     }
     .emptyCart .allBtn{
         margin: 0 auto;
@@ -152,6 +198,9 @@
     }
     .emptyCart .allBtn p{
         margin-top: 5px;        
+    }
+    .sect-basket .s-grid-block-img{
+        margin-top: 0;
     }
     @media (max-width: 1052px) {
         .sect-basket .sb-grid .sb-grid-block1 {
@@ -195,8 +244,11 @@
             line-height: 35px;
             height: 35px;
             text-align: center;
-            width: 80px;
+            min-width: 80px;
             border-radius: 7px;
+        }
+        .emptyCart{
+            width: 50%;
         }
     }
 </style>

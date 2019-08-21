@@ -12,17 +12,17 @@
                             <option>Юридическое лицо</option>
                         </select>
                         <label class="form-icon">Имя:<span class="star-red">*</span><i class="fas fa-user-alt"></i></label>
-                        <input type="text" name="name" placeholder="Введите ваше имя" required>
+                        <input v-model="name" type="text" name="name" placeholder="Введите ваше имя" required>
                         <label class="form-icon">Телефон:<span class="star-red">*</span><i class="fas fa-mobile-alt"></i></label>
-                        <input type="text" name="phone" placeholder="Введите ваш телефон" required>
+                        <input v-model="phone" type="text" name="phone" placeholder="Введите ваш телефон" required>
                         <label class="form-icon">Придумайте пароль:<span class="star-red">*</span><i class="fas fa-lock"></i></label>
-                        <input type="password" name="password" placeholder="Введите пароль" required>
+                        <input v-model="password" type="password" name="password" placeholder="Введите пароль" required>
                         <label class="form-icon">Повторите пароль:<span class="star-red">*</span><i class="fas fa-lock"></i></label>
                         <input type="password" name="password" placeholder="Повторите пароль" required>
                     </div>
                     <div class="sa-form-block2">
                         <label>Введите ваш Email:<span class="star-red">*</span></label>
-                        <input type="email" name="email" placeholder="Ваш Email">
+                        <input v-model="email" type="email" name="email" placeholder="Ваш Email" required>
                         <p><strong>Политика конфиденциальности:</strong></p>
                         <div class="security">
                             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Accusamus, iure eos. Corporis, quaerat doloribus, non sint, magnam nobis quisquam saepe a explicabo repellat eos asperiores exercitationem veniam dolores voluptatem velit. Numquam, labore ipsum odit corrupti, doloribus, deserunt cum asperiores eos placeat quaerat enim possimus! Nisi necessitatibus ratione saepe eos mollitia?
@@ -32,7 +32,7 @@
                             <label for="checkbox">
                                 Я ознакомился и соглашаюсь с политикой Конфиденциальности
                             </label>
-                            <router-link :to="'confirm'"><button class="allBtn">Зарегистрироваться</button></router-link>
+                            <button class="allBtn" @click.prevent="register()">Зарегистрироваться</button>
                         </div>
                     </div>
                 </form>
@@ -42,8 +42,45 @@
 </template>
 
 <script>
+    import axios from 'axios'
     export default {
-        
+        data() {
+            return {
+                name: '',
+                password: '',
+                phone: '',
+                email: ''
+            }
+        },
+        methods: {
+            register() {
+                axios.post('http://localhost:8080/api/user/register', {
+                    "name": this.name,
+                    "password": this.password,
+                    "city_id": "1",
+                    "phone": this.phone,
+                    "email": this.email,
+                    "type_user": "1",
+                    "props": null,
+                    // "token": "qwerty1234",
+                    "updated_at": "2019-08-16 04:16:14",
+                    "created_at": Date.now(),
+                    "id": 4
+                })
+                .then(response => { 
+                    console.log(response)
+                    if(response.status === 200){
+                        this.$router.push({path: 'confirm'})
+                    }
+                })
+                .catch(error => {
+                    console.log(error.response)
+                });
+            }
+        },
+        created () {
+            this.$store.dispatch('GET_USER_BY_ID')
+        },
     }
 </script>
 
@@ -139,5 +176,33 @@
     }
     .sa-block2-auth .allBtn{
         margin-top: 7px;
+    }
+    @media (max-width: 947px) {
+        .sa-content form .sa-form-block1{
+            width: 35%;
+        }
+        .sa-content form .sa-form-block2{
+            width: 60%;
+        }
+    }
+    @media (max-width: 768px) {
+        .sa-content form{
+            flex-direction: column;
+        }
+        .sa-content form input{
+            width: 218px;
+        }
+        .sa-content form .sa-form-block1{
+            width: 240px;
+        }
+        .sa-content form .sa-form-block2{
+            width: 90%;
+        }
+    }
+    @media (max-width: 579px) {
+        .sa-block2-auth{
+            display: flex;
+            flex-direction: column;
+        }
     }
 </style>

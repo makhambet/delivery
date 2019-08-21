@@ -6,16 +6,9 @@
             <h4>Адреса наших </h4>
             <nav class="sab-menu">
                 <ul>
-                    <li>
-                        <strong>Абая проспект, 125а</strong><br>
+                    <li v-for="item in OFFICES" :key="item.id">
+                        <strong>{{item.address}}</strong><br>
                         <div class="city">г. Алматы</div>
-                        Пн - Чт: 10:00 &mdash; 0:00<br>
-                        Пт - Сб: 10:00 &mdash; 1:00<br>
-                        Вс: 10:00 &mdash; 00:00
-                    </li>
-                    <li>
-                        <strong>Абая проспект, 125а</strong><br>
-                        <div class="city">г.Нурсултан (Астана)</div>
                         Пн - Чт: 10:00 &mdash; 0:00<br>
                         Пт - Сб: 10:00 &mdash; 1:00<br>
                         Вс: 10:00 &mdash; 00:00
@@ -49,8 +42,11 @@
 </template>
 
 <script>
+    import {mapGetters} from 'vuex'
     export default {
-        
+        computed: {
+            ...mapGetters(['OFFICES'])
+        },
     }
 </script>
 

@@ -3,10 +3,13 @@
         <div class="wrapper">
             <small>Главная > <span class="now-page">Избранные</span></small>
             <h2>Избранные</h2>
-            <div class="sc-grid">
+            <div v-if="isChosen" class="sc-grid">
                 <div v-for="(item, i) in filterChosen" :key="i">
                     <chosen-good :chosenGoods="item"></chosen-good>
                 </div>
+            </div>
+            <div v-if="!isChosen">
+                <h2>У вас еще нет избранных товаров</h2>
             </div>
         </div>
     </section>
@@ -15,15 +18,26 @@
 <script>
     import ChosenGood from '../components/ChosenItems'
     export default {
+        data() {
+            return {
+                isChosen: false
+            }
+        },
         computed: {
             goods(){
-                return this.$store.getters.getGoods
+                return this.$store.getters.GOODS
             },
             filterChosen(){
                 let goods = this.goods;
-                goods = goods.filter(b=> b.heart === true)
+                goods = goods.filter(b=> b.in_favorite === true)
+                if(goods.length)
+                    this.isChosen = true
                 return goods
             }
+        },
+        created () {
+            // console.log(this.goods)
+            // this.isChosen = true
         },
         components: {
             ChosenGood,
@@ -57,7 +71,7 @@
     }
     .s-grid-block-img img{
         width: 80%;
-        max-height: 130px;
+        max-height: 110px;
         position: absolute;
         top: 0;
         right: 0;
@@ -92,6 +106,7 @@
     }
     .s-grid-block-img{
         min-width: 90px;
+        width: 40%;
     }
 
     @media (max-width: 1400px){

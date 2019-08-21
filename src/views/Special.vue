@@ -1,7 +1,7 @@
 <template>
     <section class="sect-special">
         <div class="wrapper">
-            <small>Главная > <span class="vip">Особый заказ</span></small>
+            <small>Главная > <span class="now-page">Особый заказ</span></small>
             <h2>Оформление заказа</h2>
             <div class="ss-content">
                 <img src="../assets/images/Group.png" alt="">
@@ -10,7 +10,7 @@
                     <p>Закажите услугу “Особый заказ” и с вами свяжется наш оператор, с которым вы сможете договориться о заказе товаров отсутствующих в каталоге.</p>
                     <form>
                         <input v-model="specialName" type="text" placeholder="Введите ваше имя"><br>
-                        <input v-model="specialPhone" type="text" placeholder="Введите ваш номер"><br>
+                        <input minlength="10" maxlength="11" v-model="specialPhone" type="text" placeholder="Введите ваш номер"><br>
                         {{check()}}
                         <button :disabled="!inputCheck" @click="specialOK=!specialOK" class="allBtn">Отправить</button>
                     </form>
@@ -40,11 +40,9 @@
         },
         methods: {
             check() {
-                if(this.specialName !== null && this.specialPhone !==null ){
+                if(this.specialName !== null && this.specialPhone.length > 10 ){
                     this.inputCheck = true
-                    console.log(this.specialName)
                 }
-                console.log(this.specialName)
             }
         }
     }

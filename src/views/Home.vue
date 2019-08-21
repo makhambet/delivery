@@ -27,37 +27,10 @@
                 </div>
             </div>
         </article>
-        <section class="sect-authorization">
-            <div class="sect-authorization-block">
-                <img src="../assets/images/Group8951.png" alt="">
-                <h3>Добро пожаловать в Delivery</h3>
-                <p>Новый магазин легок и прост в использовании, присоединяйся к нам и узнай о новых предложениях</p>
-                <form action="send.php">
-                    <h4>Авторизация</h4>
-                    <label>Телефон</label><br>
-                    <input type="phone" placeholder="Введите номер телефона" required><br>
-                    <label>Пароль</label><br>
-                    <input type="password" placeholder="Введите пароль" required><br>
-                    <div class="sect-auth-form-content">
-                        <a href="#" class="forget">Забыли пароль?</a>
-                        <label> 
-                            <a href="#" class="forget">
-                                Запомнить&nbsp;меня
-                            </a>
-                            <input type="checkbox">
-                        </label>
-                    </div>
-                    <div class="sect-auth-form-content">
-                        <button>
-                            <router-link :to="'/signin'">Регистрация</router-link>
-                        </button>
-                        <input type="submit" value="Войти">
-                    </div>
-                </form>
-            </div>
+        <section class="sect-download">
+            
         </section>
         <section class="sect1"  id="app">
-            {{sizing()}}
             <div class="wrapper">
                 <small>
                     Главная > <span class="now-page">Самые продаваемые</span>
@@ -67,8 +40,8 @@
                     <div class="sect1-block2">
                         <h2>Самые продаваемые</h2>
                         <div class="sect1-block2-carousel">
-                            <div class="all"><router-link to="/all">Все</router-link></div>
-                            <carousel :perPage="1" :perPageCustom="[[360,1], [480, 2], [768, 3], [947,4], [1200,5]]" :touchDrag="false" :paginationSize="0" :mouse-drag="true" :loop="true" :autoplay="false" :navigationEnabled="true">
+                            <div class="all" @click="product_title('Самые продаваемые')">Все</div>
+                            <carousel :perPage="1" :perPageCustom="[[360,1], [480, 2], [768, 3], [947,4], [1200,5]]" :touchDrag="false" :paginationSize="0" :mouse-drag="true" :loop="true" :autoplay="true" :navigationEnabled="true">
                                 <slide  v-for="(item, index) in goods" :key="index">
                                     <best-goods :bestGoods="item"></best-goods>
                                 </slide>
@@ -76,8 +49,8 @@
                         </div>
                         <h2>Бытовая химия</h2>
                         <div class="sect1-block2-carousel">
-                            <div class="all"><router-link to="/all">Все</router-link></div>
-                            <carousel :perPage="1" :perPageCustom="[[360,1], [480, 2], [768, 3], [947,4], [1200,5]]" :touchDrag="false" :paginationSize="0" :mouse-drag="true" :loop="true" :autoplay="false" :navigationEnabled="true">
+                            <div class="all" @click="product_title('Бытовая химия')">Все</div>
+                            <carousel :perPage="1" :perPageCustom="[[360,1], [480, 2], [768, 3], [947,4], [1200,5]]" :touchDrag="false" :paginationSize="0" :mouse-drag="true" :loop="true" :autoplay="true" :navigationEnabled="true">
                                 <slide  v-for="(item, index) in goods" :key="index">
                                     <best-goods :bestGoods="item"></best-goods>
                                 </slide>
@@ -106,8 +79,10 @@
 <script>
     import BestGoods from '../components/BestItems'
     import AppMenu from '../components/AppMenu'
-    import { Carousel, Slide } from 'vue-carousel';
+    import nextPredBtn from '../mixins/nextPredBtn'
+    import { Carousel, Slide } from 'vue-carousel'
     export default {
+        mixins: [nextPredBtn],
         data() {
             return {
                 page: 0,
@@ -116,51 +91,37 @@
                 size: 5
             }
         },
-        methods: {            
-            next(){
-                this.page++
-            },
-            sizing(){
-                let w = window.innerWidth;
-                if(w<=947){
-                    this.size = 4
-                }
-                console.log("1")
-            },
-            pred(){
-                this.page--
-            }
-        },
-        mounted () {
-            this.sizing();
-        },
         computed: {
             goods() {
-                return this.$store.getters.getGoods
+                return this.$store.getters.GOODS
             },
-            allGoods(){
-                let goods = this.goods;
-                let lenght = goods.length;
-                let size = 5
-                let a = this.page;
-                let b = this.page+this.size;
-                if(b>=lenght) {
-                    this.nextEnd = true
-                    console.log(this.nextEnd)
-                }
-                else{
-                    this.nextEnd = false
-                }
-                this.bests = goods.filter(b=>b.type==='best')
-                this.bests = this.bests.slice(a,b)
-                return goods.slice(a,b);
-            },
+            // allGoods(){
+            //     let goods = this.goods;
+            //     let lenght = goods.length;
+            //     let a = this.page;
+            //     let b = this.page+this.size;
+            //     if(b>=lenght) {
+            //         this.nextEnd = true
+            //     }
+            //     else{
+            //         this.nextEnd = false
+            //     }
+            //     this.bests = goods.filter(b=>b.type==='best')
+            //     this.bests = this.bests.slice(a,b)
+            //     return goods.slice(a,b);
+            // },
+        },
+        methods: {
+            product_title(id) {
+                localStorage.product_title = id
+                this.$router.push({path: 'all'})
+            }
         },
         components: {
             BestGoods,
             AppMenu,
             Carousel,
-            Slide
+            Slide,
         },
     }
 </script>
