@@ -12,7 +12,8 @@ import Payment from './views/Payment.vue'
 import Confirm from './views/Confirm.vue'
 import Registr from './views/Registr.vue'
 import All from './views/All.vue'
-import Order from './views/Ordering.vue'
+import Orders from './views/Orders.vue'
+import Order from './views/Order.vue'
 
 Vue.use(Router)
 
@@ -82,8 +83,14 @@ export default new Router({
       component: All
     },
     {
-      path: '/order',
+      path: '/orders',
+      name: 'orders',
+      component: Orders
+    },
+    {
+      path: '/orders:id',
       name: 'order',
+      props: true,
       component: Order
     }, 
   ]
