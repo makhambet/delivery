@@ -4,21 +4,21 @@
             <div class="footer-block1 f-blc1">
                 <nav class="f-block1-menu">
                     <ul>
-                        <li v-for="(menu, index) in menus" :key="index">
+                        <li v-for="(menu, index) in $ml.get('navbar')" :key="index">
                             <router-link :to="menu.route">{{menu.title}}</router-link>
                         </li>
                     </ul>
                 </nav>
             </div>
             <div class="footer-block2 f-blc2">
-                <p>Телефон доставки в г.Алматы: <br> 
-                    <a href="#">+7(727) 346 85 83</a>
+                <p>{{$ml.get('delivery_phone')}}: <br> 
+                    <a>+7(727) 346 85 83</a>
                 </p>
             </div>
         </div>
         <div class="wrapper">
             <div class="footer-block1">
-                <p>Если у вас есть вопрос, пишите нам письмо help@info.kz <br>
+                <p>{{$ml.get('write_message')}} <br>
                     <span class="copyright">
                         &copy;2019 Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo necessitatibus incidunt vitae deleniti magni totam debitis, sequi dolorum omnis repudiandae?
                     </span>
@@ -38,40 +38,12 @@
 </template>
 
 <script>
+    import { MLBuilder } from 'vue-multilanguage'
     export default {
         computed:{
-            menus(){
-                return[
-                    {
-                        title: 'Главная',
-                        route: '/'
-                    },
-                    {
-                        title: 'Заказы',
-                        route: '/'
-                    },
-                    {
-                        title: 'Товары',
-                        route: '/good'
-                    },
-                    {
-                        title: 'Оплата',
-                        route: '/payment'
-                    },
-                    {
-                        title: 'Избранное',
-                        route: '/chosen'
-                    },
-                    {
-                        title: 'Корзина',
-                        route: '/cart'
-                    },
-                    {
-                        title: 'Профиль',
-                        route: '/profile'
-                    },                    
-                ]
-            }
+            mlmyMessage () {
+                return new MLBuilder('header')
+            }  
         }
     }
 </script>

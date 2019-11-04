@@ -1,88 +1,106 @@
 <template>
     <div class="wrapper" id="up">
-        <div v-if="!auth" class="sect1-block">
-            <!-- <div id="loading"></div> -->
+        <div class="sect1-block">
             <app-menu></app-menu>
-            <div class="sect1-block4">
-                <h2>{{product_title}}</h2>
-                <input ref="src" type="text" v-model="src">
-                <div class="s1-block4-grid">
-                    <div v-for="(item, index) in filteredPagination" :key="index">
-                        <best-goods :bestGoods="item"></best-goods>
+            <div class="sect1-block4 all-products">
+                <h2>{{$ml.get('products')}}</h2>
+                <p>{{$ml.get('change_categories')}}</p>
+                <div class="article-products">
+                    <div 
+                        v-show="item.parent_id !== -1" 
+                        v-for="(item, index) in CATS" 
+                        :key="index" @click="open(item.id, item.name)" 
+                        class="a-products-first"
+                        :style="{ backgroundImage: 'url(' + images(item.image_web) + ')'}"
+                    >
+                        <div>
+                            <h4>{{item.name}}</h4>
+                        </div>
                     </div>
                 </div>
-                <div class="all-pagination">
-                    <div class="left">
-                        <button :disabled="pageNumber === 0" @click.prevent="prevPage()"><a href="#up">&lt;</a></button>
-                    </div>
-                    <div class="middle">
-                        <button v-if="pageNumber!==0" @click="pageNumber=0">1</button>
-                        <span v-if="pageNumber>=2">...</span>
-                        <button class="current">{{pageNumber+1}}</button>
-                        <span v-if="pageNumber<currentPage-2">...</span>
-                        <button v-if="pageNumber<currentPage-1" @click="pageNumber=currentPage-1">{{currentPage}}</button>
-                    </div>
-                    <div class="right">
-                        <a><button @click.prevent="nextPage()" :disabled="pageNumber >= pageCount -1" >&gt;</button></a>
-                    </div>
+                <div class="all-searcBtn">
+                    <button @click="SearchProduct()">Найти</button>
                 </div>
-                <p style="float:right;">Всего {{length}} товаров</p>
+            
             </div>
-        </div>
-        <div v-if="auth">
-            <h1>Вы не авторизованы</h1>
         </div>
     </div>
 </template>
 
 <script>
-    import BestGoods from '../components/BestItems'
-    import {mapGetters} from 'vuex'
     import AppMenu from '../components/AppMenu'
-    import help from '../help/cart'
-    import pagination from '../mixins/pagination'
-    import user from '../help/user_id'
+    import { MLBuilder } from 'vue-multilanguage'
+    import { mapGetters } from 'vuex'
+    import config from '../help/config'
     export default {
-        mixins: [pagination],
+        // mixins: [pagination],
         data() {
             return {
-                searchTerm: '',
-                searcing: '',
-                // src : help.searchInput,
-                src: '',
-                pageNumber: 0,
-                pageCount: 0,
-                currentPage: 0,
-                size: 8,
-                length: 0,
-                paginationName: 'GOODS',
-                name: [],
-                product_title: 'Товары',
-                auth: true
+                page: 1,
+                showing: false,
+                id: null, 
+                title: '',
+                url: config.url
             }
         },
         components: {
-            BestGoods,
             AppMenu
         },
-        created () {
-            if(user.token === null || user.token === 'null'){
-                this.auth = true
-            }
-            else{
-                this.auth = false
-            }
-            this.$store.dispatch('GET_GOODS')
+        computed: {
+            mlmyMessage () {
+                return new MLBuilder('header')
+            },
+            ...mapGetters([
+                'CATS'
+            ])  
         },
-        mounted () {
-            this.product_title = localStorage.product_title || 'Товары'
+        methods: {
+            SearchProduct(){
+                localStorage.delivery_product_title = 'Товары'
+                localStorage.delivery_product_catid = null
+                localStorage.delivery_request = 'GOODS'
+                this.$store.dispatch('GET_GOODS', {
+                    params: {
+                        'page': '1',
+                        // 'cats[0]': this.id
+                    },
+                    headers: {
+                        "token": localStorage.delivery_token || 'my_token'
+                    }
+                })  
+                this.$router.push({path: 'products'})
+            },
+            open(id, title){
+                localStorage.delivery_product_title = title
+                localStorage.delivery_product_catid = id
+                this.$store.dispatch('GET_GOODS', {
+                    params: {
+                        'page': '1',
+                        'cats[0]': id
+                    },
+                    headers: {
+                        "token": localStorage.delivery_token || 'my_token'
+                    }
+                })  
+                this.$router.push({path: 'products'})
+            },
+            images(img){
+                if(img === null) return '../images.png'
+                else return this.url + img
+            },
         },
+        beforeMount() {
+            this.page = this.$route.query.page
+        }
     }
 </script>
 
 <style>
     .sect1-block4{
         width: 75%;
+    }
+    .all-products{
+        width: 100%;
     }
     .all-pagination{
         margin-top: 10px;
@@ -134,6 +152,18 @@
         border-top-color: #fff;
         animation: spin 1s ease-in-out infinite;
         -webkit-animation: spin 1s ease-in-out infinite;
+    }
+    .all-searcBtn{
+        margin-top: 20px;
+        text-align: right;
+    }
+    .all-searcBtn button{
+        background: #2A98FF;
+        color: #fff;
+        border-radius: 10px;
+        border: #2A98FF;
+        padding: 10px 50px;
+        /* width: 20%; */
     }
 
     @keyframes spin {

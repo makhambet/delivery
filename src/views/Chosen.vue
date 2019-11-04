@@ -1,14 +1,16 @@
 <template>
     <section class="sect-choosen">
         <div class="wrapper">
-            <small>Главная > <span class="now-page">Избранные</span></small>
-            <h2>Избранные</h2>
-            <div v-if="isChosen" class="sc-grid">
-                <div v-for="(item, i) in filterChosen" :key="i">
+            <div class="page">
+                <small>{{$ml.get('msg')}} > <span class="now-page">{{$ml.get('chosen')}}</span></small>
+            </div>
+            <h2>{{$ml.get('chosen')}}</h2>
+            <div v-if="FAVORITE_COUNT>0" class="sc-grid">
+                <div v-for="(item, i) in FAVORITE_LIST" :key="i">
                     <chosen-good :chosenGoods="item"></chosen-good>
                 </div>
             </div>
-            <div v-if="!isChosen">
+            <div v-if="FAVORITE_COUNT===0">
                 <h2>У вас еще нет избранных товаров</h2>
             </div>
         </div>
@@ -17,27 +19,29 @@
 
 <script>
     import ChosenGood from '../components/ChosenItems'
+    import { MLBuilder } from 'vue-multilanguage'
+    import {mapGetters} from 'vuex'
     export default {
         data() {
             return {
                 isChosen: false
             }
         },
+        mounted () {
+            this.$store.dispatch('GET_FAVORITE_LIST')
+        },
         computed: {
-            goods(){
-                return this.$store.getters.GOODS
-            },
-            filterChosen(){
-                let goods = this.goods;
-                goods = goods.filter(b=> b.in_favorite === true)
-                if(goods.length)
-                    this.isChosen = true
-                return goods
-            }
+            ...mapGetters([
+                'FAVORITE_LIST',
+                'FAVORITE_COUNT'
+            ]),
+            mlmyMessage () {
+                return new MLBuilder('header')
+            }  
         },
         created () {
-            // console.log(this.goods)
-            // this.isChosen = true
+            this.$store.dispatch('GET_FAVORITE_LIST')
+            
         },
         components: {
             ChosenGood,
@@ -55,6 +59,7 @@
     .sect-choosen .sc-grid{
         display: grid;
         grid-template-areas: 'one two';
+        grid-template-columns: 1fr 1fr;
         width: 80%;
         grid-gap: 40px;
     }
@@ -62,6 +67,7 @@
         display: flex;
         box-shadow: 0 8px 15px #E7EAF0;
         padding: 2px 20px 10px 10px;
+        height: calc(100% - 12px);
     }
     .s-grid-block-img{
         width: 30%;
@@ -85,12 +91,19 @@
         font-weight: bold;
         font-size: 18px;
     }
-    .sc-grid-content{
+    .sc-grid-content {
+        width: 60%;
         position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
     }
     .sc-grid-flex{
         display: flex;
         justify-content: space-between;
+    }
+    #app .chosen{
+        color: #FF7474;
     }
     .chosen{
         top: 5px;
@@ -139,9 +152,10 @@
             width: 135px;
         }
     }
-    @media (max-width: 768px) {
+    @media (max-width: 579px) {
         .sect-choosen .sc-grid{
             grid-template-areas: 'one' 'two';
+            grid-template-columns: 1fr;
         }
         .sc-grid .sc-grid-block{
             margin: 0 auto;

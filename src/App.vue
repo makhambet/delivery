@@ -2,8 +2,8 @@
   <div id="app">
     <div id="nav">
       <app-header></app-header>
-      <transition name="fade">
-        <router-view></router-view>
+      <transition class="bottom-body" name="fade">
+        <router-view class="bottom-body"></router-view>
       </transition>
       </div>
       <app-aside></app-aside>
@@ -20,6 +20,13 @@
       AppAside,
       AppFooter
     },
+    watch: {
+      '$route' (to, from) {
+        const toDepth = to.path.split('/').length
+        const fromDepth = from.path.split('/').length
+        this.transitionName = toDepth < fromDepth ? 'slide-right' : 'slide-left'
+      }
+    }
   }
 </script>
 <style>

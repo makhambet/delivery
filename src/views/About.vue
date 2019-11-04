@@ -1,55 +1,32 @@
 <template>
     <section class="sect-about">
         <div class="wrapper">
-            <small>Главная > <span class="now-page">Контакты</span></small>
-            <h2>Информация о нас</h2>
-            <h4>Адреса наших </h4>
-            <nav class="sab-menu">
-                <ul>
-                    <li v-for="item in OFFICES" :key="item.id">
-                        <strong>{{item.address}}</strong><br>
-                        <div class="city">г. Алматы</div>
-                        Пн - Чт: 10:00 &mdash; 0:00<br>
-                        Пт - Сб: 10:00 &mdash; 1:00<br>
-                        Вс: 10:00 &mdash; 00:00
-                    </li>
-                    <li>
-                        <strong>Абая проспект, 125а</strong><br>
-                        <div class="city">г. Шымкент</div>
-                        Пн - Чт: 10:00 &mdash; 0:00<br>
-                        Пт - Сб: 10:00 &mdash; 1:00<br>
-                        Вс: 10:00 &mdash; 00:00
-                    </li>
-                </ul>
-            </nav>
-            <h4>Мы в социальных сетях</h4>
-            <i class="fab fa-vk"></i> - Вконтакте <br>
-            <i class="fab fa-instagram"></i> - Instagram
-            <div class="warning">
-                <p>Важно! Если у вас поменялась сумма при оплате: <br>
-                    Если у вас поменялась сумма при оплате — возможно это из-за наличия весовых товаров в заказе.
-                    Поскольку не всегда есть возможность набрать точную массу до грамма, стоимость заказа может по итогу незначительно поменяться.</p>
-                    
-                    <p> Если сумма оказалась меньше, а вы уже оплатили онлайн, то остаток денег мы вернем вам на карточку в течение 3-х рабочих дней. <br>
-                    Если же сумма больше, то нужно будет доплатить разницу наличными курьеру при доставке. <br>
-                    Обо всех изменениях, оператор вас обязательно предупредит.</p>
-                    
-                    <p>Если у вас возникли проблемы с оплатой, позвоните нам по телефонам +7 (727) 346 85 83, <br>
-                    +7 (778) 021 13 17 или напишите на help@info.kz.</p>
+            <div class="page">
+                <small>{{$ml.get('msg')}} > <span class="now-page">{{$ml.get('payment')}}</span></small>
             </div>
+            <div v-html="OFFICES"></div>
         </div>
     </section>
 </template>
 
 <script>
     import {mapGetters} from 'vuex'
+    import { MLBuilder } from 'vue-multilanguage'
     export default {
         computed: {
-            ...mapGetters(['OFFICES'])
+            ...mapGetters(['OFFICES']),
+            mlmyMessage () {
+                return new MLBuilder('header')
+            }  
+        },
+        created () {
+            this.$store.dispatch('GET_OFFICES');
         },
     }
 </script>
 
 <style scoped>
-
+    .sect-about strong{
+        color: #515C6F;
+    }
 </style>

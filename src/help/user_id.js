@@ -1,8 +1,8 @@
 export default({
-    id: localStorage.user_id || null,
+    id: localStorage.delivery_user_id || null,
     header_download: false,
-    token: localStorage.token || null,
+    token: localStorage.delivery_token || null,
     auth: false,
     totalPrice: 0,
-    count: localStorage.count || 0
+    count: localStorage.delivery_count || 0
 })

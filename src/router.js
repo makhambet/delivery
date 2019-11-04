@@ -14,6 +14,10 @@ import Registr from './views/Registr.vue'
 import All from './views/All.vue'
 import Orders from './views/Orders.vue'
 import Order from './views/Order.vue'
+import SpecialOk from './views/SpecialOk.vue'
+import Products from './views/Products.vue'
+import NewPassword from './views/NewPassword.vue'
+import SpecialOrders from './views/SpecialOrders.vue'
 
 Vue.use(Router)
 
@@ -42,7 +46,7 @@ export default new Router({
       component: Chosen
     },
     {
-      path: '/good:id',
+      path: '/good/:id',
       name: 'good',
       props: true,
       component: Good
@@ -80,12 +84,23 @@ export default new Router({
     {
       path: '/all',
       name: 'all',
-      component: All
+      component: All,
+    },
+    {
+      path: '/products',
+      name: 'products',
+      component: Products,
+      query: {
+        page: null
+      }
     },
     {
       path: '/orders',
       name: 'orders',
-      component: Orders
+      component: Orders,
+      query: {
+        page: null
+      }
     },
     {
       path: '/orders:id',
@@ -93,5 +108,24 @@ export default new Router({
       props: true,
       component: Order
     }, 
-  ]
+    {
+      path: '/special-ok',
+      name: 'special_ok',
+      component: SpecialOk
+    }, 
+    {
+      path: '/new-password',
+      name: 'new-password',
+      component: NewPassword
+    }, 
+    {
+      path: '/special-orders/:id',
+      name: 'special-orders',
+      props: true,
+      component: SpecialOrders
+    }, 
+  ],
+  scrollBehavior () {
+    return { x: 0, y: 0 }
+  }
 })
