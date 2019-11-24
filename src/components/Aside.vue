@@ -1,12 +1,12 @@
 <template>
     <div class="aside">
-        <div class="wrapper">
+        <!-- <div class="wrapper"> -->
             <carousel :autoplay="true" :autoplayTimeout="2000" :perPage="1" :loop="true" :paginationEnabled="false">
                 <slide v-for="(item, index) in news" :key="index">
                     <a :href="item.link"><img :src="url + item.image" alt=""></a>
                 </slide>
             </carousel>
-        </div>
+        <!-- </div> -->
     </div>
 </template>
 

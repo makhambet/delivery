@@ -80,7 +80,8 @@
                 'FILTER_SUBCATS',
                 'PRICEMIN', 
                 'PRICEMAX',
-                'FILTER_SUB_SUBCATS'
+                'FILTER_SUB_SUBCATS',
+                'SEARCH'
             ]),
             min(){
                 return this.$store.getters.PRICEMIN;
@@ -94,14 +95,8 @@
         },
         methods: {
             slider: function() {
-                // if (this.minPrice > this.maxPrice) {
-                //     var tmp = this.maxPrice;
-                //     this.maxPrice = this.minPrice;
-                //     this.minPrice = tmp;
-                // }
             },
             filter(){
-                console.log('sdkfnbsdkf')
                 let arr = {
                     'price_min': this.minPrice,
                     'price_max': this.maxPrice,
@@ -110,7 +105,7 @@
                 for (let i = 0; i < this.cat_id.length; i++) {
                     arr['cats[' + i + ']'] = this.cat_id[i];
                 }
-                console.log(arr)
+                localStorage.setItem('arr', JSON.stringify(arr));
                 this.$store.dispatch('GET_GOODS', {
                     params: arr,
                     headers: {
@@ -119,10 +114,17 @@
                 })
                 this.reserted = true;
                 localStorage.delivery_product_title = this.$ml.get('products');
-                localStorage.delivery_product_catid = null;
-                localStorage.delivery_request = 'GOODS'
+                localStorage.delivery_product_catid = NaN;
+                this.$store.dispatch('GET_SEARCH', {
+                    params: {
+                    },
+                    headers: {
+                        token: 'my_token'
+                    }
+                })
+                localStorage.delivery_request = 'GOODS';
                 this.$emit('closed')
-                this.$router.push({path: 'products'})
+                this.$router.push({path: 'products', query: {page: 0}})
             },
             reset(){
                 this.minPrice = this.min;

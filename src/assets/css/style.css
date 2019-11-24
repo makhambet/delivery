@@ -58,6 +58,17 @@ h3{
     color: #8D8D8D;
     font-size: 12px;
 }
+.full_heart{
+    position: absolute;
+    z-index: 9;
+    right: 11px;
+    font-size: 20px;
+    color: #FF7474;
+    margin-top: 2px;
+}
+.sect1-block2-carousel .full_heart{
+    margin-top: -1px;
+}
 /* -------------------БАНЕР-------------------------- */
 
 .download{
@@ -104,6 +115,9 @@ h3{
     z-index: 999;
     background: #fdfdfd;
     opacity: 1;
+}
+.headerActive{
+    box-shadow: 0 8px 11px 2px rgba(60,64,67,.3), 2px 2px 7px 2px rgba(60,64,67,.15);
 }
 .bottom-body{
     margin-top: 86px;
@@ -223,7 +237,12 @@ h3{
     margin: 0;
 }
 .h-block2-menu > ul li{
-    padding-right: 30px;
+    border-bottom: 2px solid #fff;
+    margin-right: 30px;
+    transition: all .5s;
+}
+.h-block2-menu > ul li:hover{
+    border-bottom: 2px solid #EDB430;
 }
 
 .h-block2-menu > ul li a{
@@ -434,8 +453,9 @@ header .VueCarousel-slide{
 .article-products{
     display: grid;
     grid-template-areas: "a b c";
-    grid-gap: 10px;
+    grid-gap: 2px;
     grid-template-columns: 1fr 1fr 1fr;
+    background: #eee;
     /* --auto-grid-min-size: 200px;
     grid-template-columns: repeat(auto-fill, minmax(var(--auto-grid-min-size), 1fr)); */
 }
@@ -458,10 +478,13 @@ header .VueCarousel-slide{
     background-size: contain;
 }
 .a-products-first > div, .a-products-second > div, .a-products-third > div{
-    background: rgba(0, 0, 0, .1);
     width: 100%;
     height: 100%;
     color: #fff;
+    transition: all .5s;
+}
+.a-products-first > div:hover, .a-products-second > div:hover, .a-products-third > div:hover{
+    /* background: rgba(0, 0, 0, .1); */
 }
 .a-products-first h4, .a-products-second h4, .a-products-third h4{
     margin-top: 0;
@@ -564,6 +587,10 @@ header .VueCarousel-slide{
     color: #515C6F;
     margin: 0 0 10px;
     cursor: pointer;
+    transition: all .5s;
+}
+.sect1-block h3:hover{
+    color: #EDB430;
 }
 .sect1-block2 h2{
     margin-top: 0;
@@ -907,7 +934,13 @@ header .VueCarousel-slide{
 }
 .f-block1-menu ul li{
     margin-right: 30px;
+    transition: all .5s;
+    border-bottom: 2px solid #fff;
 }
+.f-block1-menu ul li:hover{
+    border-bottom: 2px solid #EDB430;
+}
+
 .copyright{
     color: #707070;
     font-size: 12px;
@@ -916,6 +949,7 @@ header .VueCarousel-slide{
 .f-block1-menu ul li a, .footer-block2, .footer-block2 a{
     color: #000;
 }
+    
 .footer-block2 a[href="http://1-000.kz/"]{
     color: #000;
     font-weight: bold;
@@ -1338,8 +1372,8 @@ header .VueCarousel-slide{
         display: grid;
         grid-template-areas: "a b"
                              "c c";
-        grid-column-gap: 2%;
-        grid-row-gap: 2%;
+        grid-column-gap: 2px;
+        grid-row-gap: 2px;
         grid-template-columns: 1fr 1fr;
     }
 
@@ -1468,6 +1502,8 @@ header .VueCarousel-slide{
     .header-block3{
         display: block;
         transition: all .5s;
+        overflow-y: scroll;
+        padding-bottom: 30px;
     }
     .header-block5{
         display: block;

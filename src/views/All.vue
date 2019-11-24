@@ -11,17 +11,21 @@
                         v-for="(item, index) in CATS" 
                         :key="index" @click="open(item.id, item.name)" 
                         class="a-products-first"
-                        :style="{ backgroundImage: 'url(' + images(item.image_web) + ')'}"
+                        style="background: #fff;"
                     >
-                        <div>
-                            <h4>{{item.name}}</h4>
+                        <div
+                            :style="{ backgroundImage: 'url(' + images(item.image_web) + ')'}"
+                            style="background-size: contain; background-repeat: no-repeat; background-position: center;"
+                        >
+                            <!-- <h4>{{item.name}}</h4> -->
                         </div>
                     </div>
+                    <div style="background: #fff;"></div>
+                    <div style="background: #fff;"></div>
                 </div>
                 <div class="all-searcBtn">
                     <button @click="SearchProduct()">Найти</button>
                 </div>
-            
             </div>
         </div>
     </div>

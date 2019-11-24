@@ -1,44 +1,46 @@
 <template>
     <div v-if="order">
         <div class="wrapper">
-            <small>Главная > Заказы > <span class="now-page">Заказ {{order.number}}</span></small>
-            <h2>Заказ №{{order.id}} от {{order.delivery_date}}</h2>
+            <div class="page">
+                <small>{{$ml.get('msg')}} > {{titles()}} > <span class="now-page">{{$ml.get('order')}} {{order.delivery_date}}</span></small>
+            </div>
+            <h2>{{titles()}} №{{order.id}} {{$ml.get('from')}} {{order.delivery_date.slice(0, 10)}} {{order.delivery_hour}}</h2>
             <div class="sect-order-content">
                 <div class="sect-order-block1">
-                    <h4>Дата доставки</h4>
+                    <h4>{{$ml.get('delivery_date')}}</h4>
                     <div class="order-block1-border">
-                        <p>Статус: {{order.status_info}}</p>
+                        <p>{{$ml.get('status')}}: {{order.status_info}}</p>
                     </div>
-                    <h4>Адрес</h4>
+                    <h4>{{$ml.get('address')}}</h4>
                     <div class="order-block1-border">
-                        <p>Алматы, пр-т {{order.address.street}} {{order.address.home}}, кв {{order.address.apartment}}</p>
+                        <p>Нур-султан, {{$ml.get('street')}} {{order.address.street}} {{order.address.home}}, {{$ml.get('apartment')}} {{order.address.apartment}}</p>
                     </div>
-                    <h4>Оплачено</h4>
+                    <h4>{{$ml.get('paid')}}</h4>
                     <div class="order-block1-border">
                         <p>{{order.pay_type_info}}</p>
                     </div>
-                    <h4>Итого</h4>
+                    <h4>{{$ml.get('total')}}</h4>
                     <div class="order-block1-border">
-                        <p>19 800 тенге + {{order.bonus}} тенге бонусами</p>
+                        <p>{{bonusPrice}}</p>
                     </div>
-                    <h4>Итоговая сумма: <br><span class="price">{{order.total_price}} тенге</span></h4>
+                    <h4>{{$ml.get('total_price')}}: <br><span class="price">{{order.total_price}} {{$ml.get('tenge')}}</span></h4>
                 </div>
                 <div class="sect-order-block2">
-                    <h4>Товары</h4>
+                    <h4>{{$ml.get('products')}}</h4>
                     <div class="sect-order-grid">
-                        <div class="sector-grid-box" v-for="item in 8" :key="item.id">
+                        <div class="sector-grid-box" v-for="item in order.products" :key="item.id">
                             <div class="sector-img">
-                                <img src="https://images.unsplash.com/photo-1564582654667-7fa92fcca939?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1057&q=80" alt="">
+                                <img :src="url + item.images[0]" alt="">
                             </div>
                             <div class="sector-text">
-                                <h5>BB-Cream новая формула</h5>
+                                <h5>{{item.name}}</h5>
                                 <div class="sector-text-flex">
-                                    <small>Стоимость:</small>
-                                    <small>Количество:</small>
+                                    <small>{{$ml.get('price')}}:</small>
+                                    <small>{{$ml.get('amount')}}:</small>
                                 </div>
                                 <div class="sector-text-flex">
-                                    <p>20 000 тенге</p>
-                                    <p>5 штук</p>
+                                    <p>{{item.all_price}} {{$ml.get('tenge')}}</p>
+                                    <p>{{item.count}} {{$ml.get('count')}}</p>
                                 </div>
                             </div>
                         </div>
@@ -50,17 +52,53 @@
 </template>
 
 <script>
+    import config from '@/help/config'
+    import { MLBuilder } from 'vue-multilanguage'
     export default {
+        data() {
+            return {
+                title: 'Заказ',
+                url: config.url
+            }
+        },
         props: {
             'id': {
-                type: Number,
-                required: true
+                type: String,
+                required: true,
+                // default: this.$router
             },
+            'isSpecial': {
+                type: Boolean,
+                
+            }
         },
         computed: {
             order() {
                 return this.$store.getters.ORDERS.find(b=>b.id ==this.id)
+            },
+            bonusPrice(){
+                let str = this.order.total_price + this.$ml.get('tenge');
+                if(this.order.bonus){
+                    if(this.order.bonus >= this.order.total_price)
+                        return this.order.bonus + ' бонусами';
+                    let allPrice = this.order.total_price - this.order.bonus;
+                    str = allPrice + this.$ml.get('tenge') + this.order.bonus + ' бонусами';
+                    return str;
+                }
+                return str;
+            },
+            mlmyMessage () {
+                return new MLBuilder('header')
+            }  
+        },
+        methods: {
+            titles(){
+                if(this.isSpecial === 'true' || this.isSpecial) return this.$ml.get('special')
+                else return this.$ml.get('order');
             }
+        },
+        created () {
+            this.titles();
         },
     }
 </script>
@@ -95,21 +133,22 @@
         grid-template-columns: repeat(auto-fill, minmax(var(--auto-grid-min-size), 1fr));
     }
     .sector-grid-box{
+        border: 1px solid #F4F5FA;
         display: flex;
+        justify-content: space-around;
     }
     .sector-img{
         width: 30%;
         position: relative;
+        text-align: center;
+    }
+    .sector-text{
+        width: 50%;
     }
     .sector-img img{
-        position: absolute;
-        right: 0;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        margin: auto;
-        max-width: 95%;
-        max-height: 98%;
+        width: 90%;
+        height: 90%;
+        margin-top: 5%;
     }
     .sector-text h5{
         font-size: 17px;

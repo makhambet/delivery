@@ -71,7 +71,6 @@
                     "phone": '7' + this.phone.toString().slice(-10),
                 })
                 .then(response => { 
-                    console.log(response)
                     if(response.status === 200){
                         // this.auth = false
                         user_id.id = response.data.result.id
@@ -103,7 +102,6 @@
                     }
                 })
                 .catch(error => {
-                    console.log(error.response)
                     this.message = error.response.data.message
                     this.password = ''
                     if(this.message === 'Польватель не найден'){

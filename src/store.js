@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
 import user_id from './help/user_id'
-const url = 'http://194.4.58.28:9999/'
+const url = 'http://server.zakaz-online.kz:9999/'
 
 
 var goodLength;
@@ -73,7 +73,6 @@ export default new Vuex.Store({
       state.order_count = payload;
     },
     SET_SEARCH(state, payload){
-      console.log(payload);
       state.search = payload;
     },
     SET_FAVORITE_LIST(state, payload){
@@ -138,12 +137,10 @@ export default new Vuex.Store({
         }
       })
       .then(response => (
-        console.log(response),
         name = response.data.result.data,
         goodLength = response.data.result.count_date
       ))
       .catch(e => {
-        console.log(e.response)
         goodLength = 0;
       })
       context.commit('SET_GOODS', name);
@@ -166,18 +163,16 @@ export default new Vuex.Store({
         await axios.get(url + 'api/search', payload,
         {
           headers: {
-            'token': 'my_token'
+            'token': localStorage.delivery_token || 'my_token'
           }
         }
         )
         .then(response => (
-          console.log('search', response),
           name = response.data.result.data,
           context.commit('SET_GOODS_LENGTH', response.data.result.count_date),
           context.commit('SET_SEARCH', name)
         ))
         .catch(e => {
-          console.log('search', e.response)
           context.commit('SET_GOODS_LENGTH', goodLength)
           if(e.response.status === 400)
           {
@@ -201,11 +196,10 @@ export default new Vuex.Store({
         }
       })
       .then(response => (
-        console.log(response),
         name = response.data.result
       ))
       .catch(e => {
-        console.log(e.response)
+        
       })
       context.commit('SET_CATS', name);
     },
@@ -223,11 +217,10 @@ export default new Vuex.Store({
       }
       )
       .then(response => (
-        // console.log(response),
         name = response.data.result
       ))
       .catch(e => {
-        console.log(e.response)
+        
       })
       context.commit('SET_FILTER_CATS', name);
     },
@@ -245,11 +238,10 @@ export default new Vuex.Store({
       }
       )
       .then(response => (
-        console.log(response),
         name = response.data.result
       ))
       .catch(e => {
-        console.log(e.response)
+        
       })
       context.commit('SET_FILTER_SUBCATS', name);
     },
@@ -267,11 +259,10 @@ export default new Vuex.Store({
       }
       )
       .then(response => (
-        // console.log(response),
         name = response.data.result
       ))
       .catch(e => {
-        console.log(e.response)
+        
       })
       context.commit('SET_FILTER_SUB_SUBCATS', name);
     },
@@ -287,7 +278,7 @@ export default new Vuex.Store({
           name = response.data.result
         ))
         .catch(e => {
-        //   console.log(e.response)
+          
         })
         context.commit('SET_USER_BY_ID', name);
         localStorage.delivery_login = true
@@ -301,7 +292,7 @@ export default new Vuex.Store({
         let name,count
         await axios.get(url + 'api/basket/list', {
           headers: {
-            "token": user_id.token
+            "token": localStorage.delivery_token
           }
         })
         .then(response => (
@@ -309,7 +300,7 @@ export default new Vuex.Store({
           count = name.length
         ))
         .catch(e => (
-          console.log(e.response),
+          
           count = 0
         ))
         context.commit('SET_BASKET_LIST', name);
@@ -357,7 +348,6 @@ export default new Vuex.Store({
           count = name.length
         ))
         .catch(e => {
-          console.log(e.response);
           count = 0
         })
         context.commit('SET_FAVORITE_LIST', name);
@@ -369,11 +359,10 @@ export default new Vuex.Store({
       let name
       await axios.get(url + 'api/info/offices')
       .then(response => (
-        console.log(response),
         name = response.data
       ))
       .catch(e => {
-        // console.log(e.response)
+        
       })
       context.commit('SET_OFFICES', name);
     },
@@ -404,10 +393,10 @@ export default new Vuex.Store({
           headers: { "token": localStorage.delivery_token }
         })
         .then(response => { 
-          console.log(response)
+          // console.log(response)
         })
         .catch(error => {
-            console.log(error.response)
+            // console.log(error.response)
         });
       }
     },
@@ -419,14 +408,14 @@ export default new Vuex.Store({
 
           },
           headers: {
-            "token": user_id.token
+            "token": localStorage.delivery_token
           }
         })
         .then(response => { 
-          console.log(response)
+          // console.log(response)
         })
         .catch(error => {
-            console.log(error.response)
+            // console.log(error.response)
         });
       }
     },
@@ -445,7 +434,6 @@ export default new Vuex.Store({
             setName = 'SET_SPECIAL_ACCEPT';
             break;
         }
-        console.log(urlName)
         await axios.post(urlName, request,
         {
           headers: {
@@ -453,18 +441,16 @@ export default new Vuex.Store({
           }
         })
         .then(response => { 
-          console.log(response)
           context.commit(setName, response.status)
         })
         .catch(error => {
-            console.log(error.response)
+            // console.log(error.response)
         });
       }
     },
     GET_PRICE: async(context, payload) => {
       await axios.get(url + 'api/prices')
       .then(responce => (
-        console.log(responce),
         context.commit('SET_PRICEMIN', responce.data.result.min),
         context.commit('SET_PRICEMAX', responce.data.result.max)
       ))
@@ -483,7 +469,7 @@ export default new Vuex.Store({
           context.commit('SET_NEWS', response.data.result)
         })
         .catch(error => {
-            console.log(error.response)
+            // console.log(error.response)
         });
         
         context.commit('SET_NEWS', name)
@@ -502,11 +488,10 @@ export default new Vuex.Store({
         }
       })
       .then(response => (
-        console.log(response),
         name = response.data.result
       ))
       .catch(e => {
-        console.log(e.response)
+        // console.log(e.response)
       })
       context.commit('SET_SIMILAR', name);
     },
@@ -522,11 +507,12 @@ export default new Vuex.Store({
           }
       })
       .then(response => (
-          console.log(response),
           data = response.data.result
       ))
-      .catch(e => 
-          console.log(e.response)  
+      .catch(e => {
+
+        }
+          // console.log(e.response)  
       )
       context.commit('SET_PRODUCT_SHOW', data)
     },
@@ -542,11 +528,10 @@ export default new Vuex.Store({
         }
       })
       .then(response => (
-        console.log(response),
         name = response.data.result
       ))
       .catch(e => {
-        console.log(e.response)
+        
       })
       context.commit('SET_ORDER_ID', name);
     },

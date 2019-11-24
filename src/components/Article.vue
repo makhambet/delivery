@@ -1,31 +1,35 @@
 <template>
     <article>
+        <carousel :perPage="1" :autoplay="true" :loop="true" :touchDrag="false" :autoplayTimeout="2000">
+            <slide v-for="(item, index) in news" :key="index">
+                <!-- <div class="article-content">
+                    <div>
+                        <h1><span>Праздник осени</span><br>20% скидки на все продукты</h1>
+                        <router-link tag="button" to="all">К продуктам</router-link>
+                    </div>
+                </div> -->
+                <a :href="item.link">
+                    <img :src="url + item.image" alt="">
+                </a>
+            </slide>
+        </carousel>
         <div class="wrapper">
-            <carousel :perPage="1" :autoplay="true" :loop="true" :touchDrag="false" :autoplayTimeout="2000">
-                <slide v-for="(item, index) in news" :key="index">
-                    <!-- <div class="article-content">
-                        <div>
-                            <h1><span>Праздник осени</span><br>20% скидки на все продукты</h1>
-                            <router-link tag="button" to="all">К продуктам</router-link>
-                        </div>
-                    </div> -->
-                    <a :href="item.link">
-                        <img :src="url + item.image" alt="">
-                    </a>
-                </slide>
-            </carousel>
             <div class="article-products">
                 <div 
                     v-show="item.parent_id !== -1" 
                     v-for="(item, index) in CATS" 
                     :key="index" @click="open(item.id, item.name)" 
-                    class="a-products-first"
-                    :style="{ backgroundImage: 'url(' + images(item.image_web) + ')'}"
+                    style="background: #fff;"
                 >
-                    <div>
-                        <h4>{{item.name}}</h4>
+                    <div                        
+                        class="a-products-first"
+                        :style="{ backgroundImage: 'url(' + images(item.image_web) + ')'}"    
+                    >
+                        <!-- <h4>{{item.name}}</h4> -->
                     </div>
                 </div>
+                <div style="background: #fff;"></div>
+                <div style="background: #fff;"></div>
             </div>
         </div>
     </article>
@@ -79,7 +83,6 @@
                 this.$router.push({path: 'products'})
             },
             openBanner(link){
-                console.log(link)
                 this.$router.push({path: link});
             },
             images(img){

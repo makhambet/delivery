@@ -1,7 +1,9 @@
 <template>
     <section class="sect-pay">
         <div class="wrapper">
-            <small>Главная > <span class="now-page">Оплата</span></small>
+            <div class="page">
+                <small>{{$ml.get('msg')}} > <span class="now-page">{{$ml.get('payment')}}</span></small>
+            </div>
             <h2>Информация о платежах</h2>
             <h4>Оплата</h4>
             <p><strong>Мы принимаем оплату любым способом, выберите для себя удобный вариант:</strong></p>
@@ -33,8 +35,13 @@
 </template>
 
 <script>
+    import { MLBuilder } from 'vue-multilanguage'
     export default {
-        
+        computed: {
+            mlmyMessage () {
+                return new MLBuilder('header')
+            }  
+        },
     }
 </script>
 

@@ -36,5 +36,7 @@
 </script>
 
 <style scoped>
-
+    .download-follow-img img{
+        max-width: 94px;
+    }
 </style>

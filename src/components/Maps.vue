@@ -48,7 +48,6 @@
         ></gmap-marker>
       </gmap-map>
       <div>
-        <p>{{markers}}</p>
       </div>
     </div>
   </div>
@@ -85,10 +84,6 @@
           }
         ],
       };
-    },
-
-    mounted() {
-      this.geolocate();
     },
     computed: {
       ...mapGetters(['USER_BY_ID']),
@@ -184,61 +179,25 @@
         this.addressDelete(id)
         console.log(this.edit)
       },
-      // placeMarker(location){
-      //   var marker = new google.maps.Marker({
-      //     position: location, 
-      //     map: map
-      //   });
-      // },
-      // receives a place object via the autocomplete component
-      // setPlace(place) {
-      //   this.currentPlace = place;
-      // },
-      // addMarker() {
-      //   if (this.currentPlace) {
-      //     const marker = {
-      //       lat: this.currentPlace.geometry.location.lat(),
-      //       lng: this.currentPlace.geometry.location.lng()
-      //     };
-      //     this.markers[0].position = marker;
-      //     this.places.push(this.currentPlace);
-      //     this.center = marker;
-      //     this.currentPlace = null;
-      //   }
-      // },
       mapRclicked(mouseArgs) {
         const createdMarker = this.addMarker();
         createdMarker.position.lat = mouseArgs.latLng.lat();
         createdMarker.position.lng = mouseArgs.latLng.lng();
-        let geocoder = new google.maps.Geocoder();
-
-
-        var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 14,
-          center: this.center
-        });
-        // this.geocodeAddress(geocoder, map);
         
       },
       addMarker: function addMarker() {
-        // this.lastId++;
+        this.lastId++;
+        axios.get('https://maps.googleapis.com/maps/api/geocode/json',{
+          params: {
+            latlng: '40.714224,-73.961452',
+            key: 'AIzaSyDYjhd-JDSwGWuiZBp_27RfSMOSCB-mTBQ'
+          }
+        })
+        .then(response => {
+          console.log(response)
+        })
         return this.markers[0];
       },
-      geocodeAddress(geocoder, resultsMap) {
-        // var address = this.addNewAddressStreet;
-        // geocoder.geocode({'address': 'Almaty'}, function(results, status) {
-        //   if (status === 'OK') {
-        //     console.log('asdfsdf')
-        //     resultsMap.setCenter(results[0].geometry.location);
-        //     var marker = new google.maps.Marker({
-        //       map: resultsMap,
-        //       position: results[0].geometry.location
-        //     });
-        //   } else {
-        //     alert('Geocode was not successful for the following reason: ' + status);
-        //   }
-        // });
-      }
     },
   };
 </script>

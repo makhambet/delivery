@@ -56,14 +56,12 @@
                 }
             },
             add(id){
-                console.log(id)
                 this.$store.dispatch('POST_ADD_BASKET', {
                     product_id: id,
                     count: 1
                 })
             },
             subscribe(id){
-                console.log(id)
                 this.$store.dispatch('POST_SUBSCRIBE_BASKET', {
                     product_id: id,
                     count: 1

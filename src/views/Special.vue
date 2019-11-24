@@ -1,34 +1,33 @@
 <template>
     <section class="sect-special">
         <div class="wrapper">
-            <small>Главная > <span class="now-page">Особый заказ</span></small>
-            <h2>Оформление заказа</h2>
+            <div class="page">
+                <small>{{$ml.get('msg')}} > <span class="now-page">{{$ml.get('special')}}</span></small>
+            </div>
+            <h2>{{$ml.get('regisrt')}}</h2>
             <div class="ss-content">
                 <img src="../assets/images/Group.png" alt="">
-                <div v-if="!specialOK" class="ss-content-follow">
-                    <h4>Не нашли товар в каталоге?</h4>
-                    <p>Закажите услугу “Особый заказ” и с вами свяжется наш оператор, с которым вы сможете договориться о заказе товаров отсутствующих в каталоге.</p>
-                    <form>
-                        <input v-model="specialName" type="text" placeholder="Введите ваше имя"><br>
-                        <input minlength="10" maxlength="11" v-model="specialPhone" type="text" placeholder="Введите ваш номер"><br>
-                        {{check()}}
-                        <button :disabled="!inputCheck" @click="specialOK=!specialOK" class="allBtn">Отправить</button>
+                <div v-if="specialOK" class="ss-content-follow">
+                    <h4>{{$ml.get('specialh4')}}</h4>
+                    <p>{{$ml.get('specialp')}}</p>
+                    <form action="special-ok">
+                        <p>{{$ml.get('your_phone')}} <the-mask style="border: none; width: 120px;" mask="+7 (7##) ### ##-##" :value="USER_BY_ID.phone"/> </p>
+                        <button @click.prevent="specialOrders()" class="allBtn">{{$ml.get('submit')}}</button>
                     </form>
                 </div>
-                <div v-if="specialOK" class="ss-content-ok">
-                    <h5>Благодарим за заявку!</h5>
-                    <p>Наш оператор свяжется с вами в ближайшее время для уточнения деталей заказа</p>
-                    <router-link to="/">
-                        <button class="allBtn">Готово</button>
-                    </router-link>
+                <div v-if="!specialOK" class="ss-content-follow">
+                    <h4>Вы не зарегистрированы!</h4>
                 </div>
             </div>
-            
         </div>
     </section>
 </template>
 
 <script>
+    import {TheMask} from 'vue-the-mask'
+    import axios from 'axios'
+    import {mapGetters} from 'vuex'
+    import { MLBuilder } from 'vue-multilanguage'
     export default {
         data() {
             return {
@@ -36,15 +35,46 @@
                 inputCheck: false,
                 specialName:  null,
                 specialPhone: null,
+                name: '',
+                phone: '',
+                status: this.$store.getters.SPECIAL_REQUEST
             }
         },
         methods: {
-            check() {
-                if(this.specialName !== null && this.specialPhone.length > 10 ){
-                    this.inputCheck = true
-                }
+            specialOrders(){
+                this.$store.dispatch('POST_SPECIAL', [
+                    {
+                        // params: {
+                        //     'order_id': 21,
+                        //     'accept_bool': 1
+                        // }
+                    },
+                    {
+                        name: 'request'
+                    }
+                ]);
+                setTimeout(() => {
+                    this.status = this.$store.getters.SPECIAL_REQUEST
+                    if(this.status === 200) this.$router.push({path: 'special-ok'})
+                }, 500);
+                    this.status = this.$store.getters.SPECIAL_REQUEST
             }
-        }
+        },
+        computed: {
+            ...mapGetters([
+                'USER_BY_ID'
+            ]),
+            mlmyMessage () {
+                return new MLBuilder('header')
+            } 
+        },
+        components: {
+            TheMask
+        },
+        created () {
+            if(localStorage.delivery_login === 'false') this.specialOK = false;
+            else if(localStorage.delivery_login === 'true') this.specialOK = true;
+        },
     }
 </script>
 
@@ -74,6 +104,10 @@
     }
     .ss-content-follow form button:disabled{
         background: rgb(111, 166, 248);
+    }
+    .sect-special .form-group input{
+        width: 100%;
+        margin: 10px auto 0;
     }
     @media (max-width: 947px){
         .ss-content {

@@ -22,7 +22,8 @@
             </div>
             <div v-if="login" class="h-block1-profile">
                 <div @click="profile=true" class="h-block1-profile">
-                    <div><img src="@/assets/images/Intersection1.png" alt=""></div>
+                    <div v-show="USER_BY_ID.avatar===null"><img src="@/assets/images/Intersection1.png" alt=""></div>
+                    <div class="avatar" v-show="USER_BY_ID.avatar!==null"><img :src="url + USER_BY_ID.avatar" alt=""></div>
                     <span v-text="$ml.get('myMessage')"></span>
                     <span>,{{USER_BY_ID.name.slice(0, 8)}}!</span> 
                     <span></span>
@@ -88,6 +89,8 @@
                 })
                 localStorage.delivery_product_title = this.$ml.get('products')
                 localStorage.delivery_product_catid = null
+                localStorage.delivery_search = this.searchModel
+                this.$router.push({path: 'products', query: {page: 0}})
                 this.$router.push({path: 'products'})
             },
             log_in(){
@@ -110,7 +113,9 @@
                 // this.$store.dispatch('GET_USER_BY_ID');
                 localStorage.clear();
                 this.profile = false;
-                this.$store.dispatch('GET_BASKET_LIST')
+                setTimeout(() => {
+                    this.$store.dispatch('GET_BASKET_LIST')
+                }, 500);
                 this.$router.push({path: '/'})
             },
             author(data){
@@ -118,7 +123,6 @@
                 this.auth = false
                 if(data){
                     this.$ml.lang = this.$store.getters.USER_BY_ID.lang
-                    console.log(this.$ml.lang)
                     this.propTitle = this.$ml.get('log_in')
                     this.visible = true
                     setTimeout(() => {
@@ -139,11 +143,9 @@
             },
             change(){
                 let lang;
-                console.log('sadfjsdf')
                 if(localStorage.delivery_login === 'true'){
                     if(this.USER_BY_ID.lang === 'ru') lang = 'en'
                     if(this.USER_BY_ID.lang === 'en') lang = 'ru'
-                    console.log(lang)
                     axios.post(this.url + 'api/user/edit', 
                     {
                         lang: lang
@@ -154,15 +156,23 @@
                         }
                     })
                     .then(response => { 
-                        console.log(response)
+                        
                     })
                     .catch(error => {
-                        console.log(error.response)
+                        
                     });
                     setTimeout(() => {
                         this.$store.dispatch('GET_USER_BY_ID');
                         this.is_lang = false;
                         this.$store.dispatch('GET_CATS');
+                        this.$store.dispatch('GET_GOODS', {
+                            params: {
+                                'page': '1'
+                            },
+                            headers: {
+                                "token": localStorage.delivery_token
+                            }
+                        })
                         // this.$store.dispatch('GET_FILTER_CATS', [ {id: 2} ])
                     }, 300);
                     
@@ -191,7 +201,6 @@
             this.count();
             this.$ml.lang = this.USER_BY_ID.lang || 'ru'
             setTimeout(() => {
-                console.log(this.USER_BY_ID.lang)
                 this.$ml.change(this.USER_BY_ID.lang)
             }, 500);
             this.lang = localStorage.delivery_login
@@ -266,5 +275,10 @@
         left: 0;
         right: 0;
         z-index: 1;
+    }
+    .avatar img{
+        width: 31px;
+        height: 31px;
+        border-radius: 50% 50%;
     }
 </style>

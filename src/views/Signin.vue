@@ -1,24 +1,47 @@
 <template>
     <section class="sect-auth">
         <div class="wrapper">
-            <small><span class="now-page">Регистрация</span></small>
+            <div class="page">
+                <small><span class="now-page">Регистрация</span></small>
+            </div>
             <h2>Регистрация</h2>
             <div class="sa-content">
-                <form action="confirm.html">
+            <facebook-account-kit ref="accountKit"
+                appId="193014614575624"
+                version="v1.0"
+                :fbAppEventsEnabled='true'
+                :debug='true'
+                state="somecrsf">
+                <form>
                     <div class="sa-form-block1">
                         <label>Тип клиента:</label>
-                        <select>
-                            <option>Физическое лицо</option>
-                            <option>Юридическое лицо</option>
+                        <select v-model="type_user">
+                            <option value="1">Физическое лицо</option>
+                            <option value="2">Юридическое лицо</option>
                         </select>
-                        <label class="form-icon">Имя:<span class="star-red">*</span><i class="fas fa-user-alt"></i></label>
-                        <input v-model="name" type="text" name="name" placeholder="Введите ваше имя" required>
-                        <label class="form-icon">Телефон:<span class="star-red">*</span><i class="fas fa-mobile-alt"></i></label>
-                        <input v-model="phone" type="text" name="phone" placeholder="Введите ваш телефон" required>
-                        <label class="form-icon">Придумайте пароль:<span class="star-red">*</span><i class="fas fa-lock"></i></label>
-                        <input v-model="password" type="password" name="password" placeholder="Введите пароль" required>
-                        <label class="form-icon">Повторите пароль:<span class="star-red">*</span><i class="fas fa-lock"></i></label>
-                        <input type="password" name="password" placeholder="Повторите пароль" required>
+                        <div class="form-group" :class="{ 'form-group--error': $v.name.$error }">
+                            <label class="form-icon">Имя:<span class="star-red">*</span><i class="far fa-user"></i></label>
+                            <input v-model.trim="$v.name.$model" type="text" name="name" placeholder="Введите имя" required>
+                        </div>
+                        <div class="error" v-if="!$v.name.minLength">Имя должен не меньше {{ $v.name.$params.minLength.min }} символов.</div>
+                        <div class="form-group" :class="{ 'form-group--error': $v.phone.$error }">
+                            <label class="form-icon">Телефон:<span class="star-red">*</span><i class="fas fa-mobile-alt"></i></label>
+                            <the-mask mask="+7 (7##) ### ##-##" v-model="$v.phone.$model" name="phone" placeholder="Введите номер телефона" required></the-mask>
+                        </div>
+                        <div class="error" v-if="!$v.phone.minLength">Введите корректный номер телефона.</div>
+                        <div class="form-group" :class="{ 'form-group--error': $v.password.$error }">
+                            <label class="form-icon">Придумайте пароль:<span class="star-red">*</span><i class="fas fa-lock"></i></label>
+                            <input v-model.trim="$v.password.$model" type="password" name="password" placeholder="Введите пароль" required>
+                        </div>
+                        <div class="error" v-if="!$v.password.minLength">Пароль должен не меньше {{ $v.password.$params.minLength.min }} символов.</div>
+                        <div class="form-group" :class="{ 'form-group--error': $v.repeatPassword.$error }">
+                            <label class="form-icon">Придумайте пароль<span class="star-red">*</span><i class="fas fa-lock"></i></label>
+                            <input v-model.trim="$v.repeatPassword.$model" type="password" name="password" placeholder="Повторите пароль" required>
+                        </div>
+                        <div class="error" v-if="!$v.repeatPassword.sameAsPassword">Пароль не идентичен.</div>
+
+
+
                     </div>
                     <div class="sa-form-block2">
                         <label>Введите ваш Email:<span class="star-red">*</span></label>
@@ -28,58 +51,111 @@
                             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Accusamus, iure eos. Corporis, quaerat doloribus, non sint, magnam nobis quisquam saepe a explicabo repellat eos asperiores exercitationem veniam dolores voluptatem velit. Numquam, labore ipsum odit corrupti, doloribus, deserunt cum asperiores eos placeat quaerat enim possimus! Nisi necessitatibus ratione saepe eos mollitia?
                         </div>
                         <div class="sa-block2-auth">
-                            <input type="checkbox" id="checkbox" />
+                            <input name="checked" type="checkbox" id="checkbox" required/>
                             <label for="checkbox">
                                 Я ознакомился и соглашаюсь с политикой Конфиденциальности
                             </label>
-                            <button class="allBtn" @click.prevent="register()">Зарегистрироваться</button>
+                            <button class="allBtn" @click.prevent="register">Зарегистрироваться</button>
                         </div>
                     </div>
                 </form>
+            </facebook-account-kit>
             </div>
         </div>
+        <app-alert v-if="visible" :propName="propTitle"></app-alert>
     </section>
 </template>
 
 <script>
+    import AppAlert from '@/components/AppAlert.vue'
+    import {TheMask} from 'vue-the-mask'
+    import { required, sameAs, minLength } from 'vuelidate/lib/validators'
     import axios from 'axios'
+    import config from '@/help/config'
     export default {
         data() {
             return {
                 name: '',
-                password: '',
                 phone: '',
-                email: ''
+                email: '',
+                age: 0,
+                submitStatus: null,
+                password: '',
+                repeatPassword: '',
+                visible: false,
+                propTitle: '',
+                type_user: '1',
+                url: config.url
             }
         },
         methods: {
             register() {
-                axios.post('http://localhost:8080/api/user/register', {
-                    "name": this.name,
-                    "password": this.password,
-                    "city_id": "1",
-                    "phone": this.phone,
-                    "email": this.email,
-                    "type_user": "1",
-                    "props": null,
-                    // "token": "qwerty1234",
-                    "updated_at": "2019-08-16 04:16:14",
-                    "created_at": Date.now(),
-                    "id": 4
-                })
-                .then(response => { 
-                    console.log(response)
-                    if(response.status === 200){
-                        this.$router.push({path: 'confirm'})
-                    }
-                })
-                .catch(error => {
-                    console.log(error.response)
-                });
+                if(!this.$v.$invalid){
+                    axios.post(this.url + '/api/user/register', {
+                        "name": this.name,
+                        "password": this.password,
+                        "city_id": "1",
+                        "phone": '7' + this.phone.toString(),
+                        "email": this.email,
+                        "type_user": this.type_user,
+                        "props": null,
+                        "created_at": Date.now(),
+                    })
+                    .then(response => { 
+                        if(response.status === 200){
+                            // this.$refs.accountKit.login(
+                            //     {
+                            //         countryCode: '+7',
+                            //         phoneNumber: this.phone.toString().substring(1, 11),
+                            //         display: "modal"
+                            //     },
+                            //     this.loginCallback
+                            // );
+                            this.propTitle = 'Вы зарегистрировались'
+                            this.visible = true
+                            setTimeout(() => {
+                                this.visible = false
+                                this.$router.push({path: '/'})
+                            }, 2000);
+                        }
+                    })
+                    .catch(error => {
+                        this.propTitle = error.response.data.message
+                        this.visible = true
+                        setTimeout(() => {
+                            this.visible = false
+                        }, 2000);
+                    });
+                }
+            },
+            loginCallback(response) {
+                if(response.status === 'PARTIALLY_AUTHENTICATED'){
+                }
+            }
+        },
+        validations: {
+            name: {
+                required,
+                minLength: minLength(4)
+            },
+            phone: {
+                required,
+                minLength: minLength(9)
+            },
+            password: {
+                required,
+                minLength: minLength(6)
+            },
+            repeatPassword: {
+                sameAsPassword: sameAs('password')
             }
         },
         created () {
             this.$store.dispatch('GET_USER_BY_ID')
+        },
+        components: {
+            AppAlert,
+            TheMask
         },
     }
 </script>
@@ -205,4 +281,15 @@
             flex-direction: column;
         }
     }
+
+
+    .form-group{
+        display: flex;
+        flex-direction: column;
+    }
+    .error{
+        color: red;
+        font-weight: bold;
+    }
+    
 </style>

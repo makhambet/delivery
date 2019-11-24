@@ -1,17 +1,19 @@
 <template>
     <section class="sect-profile">
         <div class="wrapper">
-            <small>Главная > <span class="now-page">Профиль</span></small>
-            <h2>Профиль</h2>
+            <div class="page">
+                <small>{{$ml.get('msg')}} > <span class="now-page">{{$ml.get('profile')}}</span></small>
+            </div>
+            <h2>{{$ml.get('profile')}}</h2>
             <div class="sp-content">
                 <div class="sp-content-block1">
-                    <p>Имя</p>
+                    <p>{{$ml.get('name')}}</p>
                 </div>
                 <div class="sp-content-block2">
                     <p>{{USER_BY_ID.name}}</p>
                 </div>
                 <div class="sp-content-block1">
-                    <p>Номер:</p>
+                    <p>{{$ml.get('phone')}}:</p>
                 </div>
                 <div class="sp-content-block2">
                     <p>+7 {{USER_BY_ID.phone}}</p>
@@ -23,219 +25,124 @@
                     <p>{{USER_BY_ID.email}}</p>
                 </div>
                 <div class="sp-content-block1">
-                    <p>Адреса доставки:</p>
+                    <p>{{$ml.get('address_delivery')}}:</p>
                 </div>
                 <div class="sp-content-block2">
-                    <nav>
-                        <ul>
-                            <li
-                                v-for="address in USER_BY_ID.addresses" 
-                                :key="address.id"
-                            >
-                                <p>
-                                    ул. {{address.street}} дом {{address.home}} квартира {{address.apartment}}
-                                    <a @click="editAddress(address.id, address.street, address.home, address.apartment)" class="changeA">Изменить</a> <a style="float: right" @click.prevent="addressDelete(address.id)" class="deleteA">Удалить</a>
-                                </p>
-                            </li>
-                        </ul>
-                    </nav>
-                    <button @click="newAddressClick()" class="sp-content-btn">
-                        Добавить новый адрес
-                    </button>
-                    <div v-if="newAddress" class="addNewAddress">
-                        <form>
-                            <label>Добавление нового адреса</label><br>
-                            <input v-model="addNewAddressStreet" type="text" placeholder="Улица"><a @click.prevent="newAddress=false" class="deleteA">Отмена</a><br>
-                            <input v-model="addNewAddressHome" type="text" placeholder="Дом">
-                            <input v-model="addNewAddressApartment" type="text" placeholder="Квартира"><br>
-                            <button @click.prevent="map=true" class="allBtn">Указать на карте</button><br>
-                            <p>Вы можете указать ваш адрес на карте. <br>Поставьте маркер на ваше местоположение.</p>
-                            <button v-if="!edit" @click.prevent="newAddress=false" class="allBtn">Отмена</button>
-                            <button :disabled="addAddress" @click.prevent="addNewAddress()" class="allBtn"><span v-if="!edit">Добавить</span><span v-if="edit">Изменить</span></button>
-                        </form>
-                    </div>
+                    
+                        
+                <app-map @alerted="alertBox('Адрес добавлен!')"></app-map>
                 </div> 
                 <div class="sp-content-block1">
-                    <p>Привязанные карты:</p>
+                    <p>{{$ml.get('tied_cards')}}:</p>
                 </div>
                 <div class="sp-content-block2">
                     <div class="sp-content-block2" v-for="card in USER_BY_ID.cards" :key="card.id">
-                        <a @click="cardDelete(card.id)" class="deleteA">Удалить</a>
+                        <a @click="cardDelete(card.id)" class="deleteA hideDelete">Удалить</a>
+                        <a class="deleteA showDelete"><i class="fas fa-trash-alt"></i></a>
                         <div class="bankCardVisa">
                             <img src="../assets/images/Icon-Creditcard-Visa1.png" alt="">
                             <p>•••• •••• •••• {{card.number.slice(-4)}}</p> 
                         </div>
                     </div>
-                    <a class="deleteA">Удалить</a>
-                    <div class="bankCardMasterCard" @click="check=!check">
-                        <img src="../assets/images/Icon-MasterCard.png" alt="">
-                        <p>•••• •••• •••• 2228</p> 
-                    </div>
                     <button @click="newCard = true" class="sp-content-btn">
-                        Добавить новую карту
+                        {{$ml.get('new_card')}}
                     </button>
                     <div v-if="newCard" class="addNewCard">
-                        <form>
-                            <label>Добавление новой карты</label><br>
-                            <input id="code" maxlength="19" size="19" ref="cardNumberInput" v-model="addNewCardNumber" placeholder="Введите номер карты: " class="card" type="text">
-                            <br>
-                            <input v-model="addNewCardMY" placeholder="ММ/ГГ" type="text">
-                            <input v-model="addNewCardCode" placeholder="CCV/CVV код" type="text"><br>
-                            <button @click.prevent="newCard = false" class="allBtn">Отмена</button>
-                            <button @click.prevent="addNewCard()" class="allBtn">Добавить</button>
+                        <form style="position: relative;">
+                            <label>{{$ml.get('adding_new_card')}}</label><br>
+                            <div style="position: relative;">
+                                <the-mask mask="####-####-####-#####" data-cp="cardNumber" id="coder" maxlength="19" size="19" v-model="addNewCardNumber" :placeholder="$ml.get('card_name')" class="card" type="text" />
+                                <div v-if="addNewCardNumber.length > 3">
+                                    <div v-if="addNewCardNumber.length > 3 && addNewCardNumber.slice(0,4) === '4052'" class="cardImg"><img src="../assets/images/Icon-Creditcard-Visa1.png" alt=""></div>
+                                    <div v-if="addNewCardNumber.length > 3 && addNewCardNumber.slice(0,4) === '5169'" class="cardImg"><img src="../assets/images/Icon-MasterCard.png" alt=""></div>
+                                </div>
+                            </div>
+                            <input style="text-transform: uppercase;" v-model="fullname" :placeholder="$ml.get('enter_fullname')" type="text" class="card"><br>
+                            <the-mask mask="##/##" data-cp="expDateMonth expDateYear" maxlength="5" v-model="addNewCardMY" :placeholder="$ml.get('card_year')" type="text" />
+                            <input maxlength="4" data-cp="cvv" v-model="addNewCardCode" :placeholder="$ml.get('cvv')" type="text"><br>
+                            <button @click.prevent="newCard = false" class="allBtn">{{$ml.get('cancel')}}</button>
+                            <button @click.prevent="asd()" class="allBtn">{{$ml.get('add')}}</button>
                         </form>
                     </div>
                 </div>
-                <div class="sp-content-block1">
-                    <p>Бонусы</p>
-                </div>
-                <div class="sp-content-block2">
-                    <p>
-                        Накоплено - 1 101 бонус <br>
-                        Хотите получить больше бонусов?<br>
-                        Введите номер друга, пригласите его установить приложение и получите 100 бонусов
-                    </p>
-                    <button class="sp-content-btn">
-                        Получить бонус
-                    </button>
-                </div>
             </div>
         </div>
+        <app-alert v-if="visible" :propName="propTitle"></app-alert>
     </section>
 </template>
 
 <script>
+    import AppMap from '@/components/Maps'
     import {mapGetters} from 'vuex'
     import user from '../help/user_id'
     import axios from 'axios'
-import { constants } from 'crypto';
+    import AppAlert from '@/components/AppAlert'
+    import { MLBuilder } from 'vue-multilanguage'
+    import {TheMask} from 'vue-the-mask'
+    import config from '@/help/config'
     export default {
         data() {
             return {
-                addNewAddressStreet: null,
-                addNewAddressHome: null,
-                addNewAddressApartment: '',
-                newAddress: false,
-                addAddress: false,
                 newCard: false,
                 addCard: false,
                 addNewCardNumber: '',
                 addNewCardMY: null,
                 addNewCardCode: null,
                 postcardNumber: '',
-                map: true,
-                edit: false
+                edit: false,
+                visible: false,
+                propTitle: '',
+                fullname: '',
+                friend: false,
+                new_friend: '',
+                url: config.url
             }
         },
         computed: {
-            ...mapGetters(['USER_BY_ID'])
-        },
-        mounted () {
-            var code = document.getElementById('code');
-            document.addEventListener("keydown", this.cardNumber)
+            ...mapGetters(['USER_BY_ID']),
+            mlmyMessage () {
+                return new MLBuilder('header')
+            }  
         },
         methods: {
-            newAddressClick(){
-                this.edit=false
-                this.newAddress=true
-                console.log(this.edit)
-                this.addNewAddressStreet = ''
-                this.addNewAddressHome = ''
-                this.addNewAddressApartment = ''
-            },
-            editAddress(id, street, home, apartment){
-                this.newAddress = true
-                this.addNewAddressStreet = street
-                this.addNewAddressHome = home
-                this.addNewAddressApartment = apartment
-                this.edit = true
-                this.addressDelete(id)
-                console.log(this.edit)
-            },
-            addressDelete(id){
-                if(user.token === null || user.token === 'null'){
-                    console.log('Адрес не удален')
-                }
-                else{
-                    axios.post('http://localhost:8080/api/user/address/delete', {
-                        "address_id": id
-                    },
-                    {
-                        headers: {
-                            "token": user.token
-                        },
-                    })
-                    .then(response => { 
-                        console.log(response)
-                        this.$store.dispatch('GET_USER_BY_ID')
-                    })
-                    .catch(error => {
-                        console.log(error.response)
-                    });
-                }
-            },
-            addNewAddress(){
-                if(this.addNewAddressStreet===null || this.addNewAddressHome===null || user.token === null || user.token === 'null'){
-                    console.log('Адрес добавлен')
-                }
-                else{
-                    console.log(this.edit)
-                    this.addAddress = true
-                    this.newAddress = false
-                    axios.post('http://localhost:8080/api/user/address/add', {
-                        "street": this.addNewAddressStreet,
-                        "home": this.addNewAddressHome,
-                        "apartment": this.addNewAddressApartment
-                    },
-                    {
-                        headers: {
-                            "token": user.token
-                        },
-                    })
-                    .then(response => { 
-                        console.log(response)
-                        this.$store.dispatch('GET_USER_BY_ID')
-                    })
-                    .catch(error => {
-                        console.log(error.response)
-                    });
-                    if(this.edit) this.edit = false
-                }
+            alertBox(title){
+                this.propTitle = title
+                this.visible = true
+                setTimeout(() => {
+                    this.visible = false
+                }, 2000);
             },
             addNewCard(){
                 if(this.addNewCardNumber===null || this.addNewCardMY===null || this.addNewCardCode===null || user.token === null || user.token === 'null'){
-                    console.log('Карта не добавлена')
+                    return
                 }
-                else{
-                    this.addAddress = true
-                    this.newAddress = false
-                    axios.post('http://localhost:8080/api/user/card/add', {
-                        "number": this.addNewCardNumber.split('-').join(''),
-                        "month": this.addNewCardMY.substr('/')[0],
-                        "year": this.addNewCardMY.slice(-4),
-                        "code": this.addNewCardCode
+                this.alertBox('Карта добавлена!')
+                this.addAddress = true
+                this.newAddress = false
+                axios.post(this.url + 'api/user/card/add', {
+                    "number": this.addNewCardNumber.split('-').join(''),
+                    "fullname": this.fullname,
+                    "month": this.addNewCardMY.substr('/')[0],
+                    "year": this.addNewCardMY.slice(-2),
+                    "code": this.addNewCardCode
+                },
+                {
+                    headers: {
+                        "token": user.token
                     },
-                    {
-                        headers: {
-                            "token": user.token
-                        },
-                    })
-                    .then(response => { 
-                        console.log(response)
-                        this.newCard = false
-                        this.$store.dispatch('GET_USER_BY_ID')
-                    })
-                    .catch(error => {
-                        console.log(error.response)
-                    });
-                }
+                })
+                .then(response => { 
+                    this.newCard = false
+                    this.$store.dispatch('GET_USER_BY_ID')
+                })
+                .catch(error => {
+                    // console.log(error.response)
+                });
             },
             cardDelete(id){
-                if(user.token === null || user.token === 'null'){
-                    console.log('Адрес не удален')
-                }
-                else{
-                    axios.post('http://localhost:8080/api/user/card/delete', {
+                if(confirm('Вы хотите удалить карту?')){
+                    this.alertBox('Карта удалена!')
+                    axios.post(this.url + 'api/user/card/delete', {
                         "card_id": id
                     },
                     {
@@ -244,26 +151,48 @@ import { constants } from 'crypto';
                         },
                     })
                     .then(response => { 
-                        console.log(response)
                         this.$store.dispatch('GET_USER_BY_ID')
                     })
                     .catch(error => {
-                        console.log(error.response)
+                        // console.log(error.response)
                     });
                 }
             },
-            cardNumber(e){
-                if(e.key>=0 && e.key<=9){
-                    this.addNewCardNumber +=e.key
-                }
-                if(this.addNewCardNumber.length > 3 ){
-                    let count = this.addNewCardNumber.split('-').join('').length
-                    if(count % 4 === 0 && count > 0 && count < 16){
-                        this.addNewCardNumber+='-'
-                    }
-                    this.postcardNumber = this.addNewCardNumber.split('-').join('')
-                }
+            newFriend(){
+                let vm = this
+                axios.post(this.url + 'api/user/invite', {
+                    "phone": '7' + this.new_friend
+                },
+                {
+                    headers: {
+                        "token": user.token
+                    },
+                })
+                .then(response => { 
+                    vm.alertBox(response.data.message)
+                    this.friend = false
+                })
+                .catch(error => {
+                    // console.log(error.response)
+                });
+            },
+            asd(){
+
             }
+        },
+        mounted () {
+            if(this.newCard){
+                var coder = document.getElementById('coder');
+                // console.log($refs);
+                // document.addEventListener("keyup", this.cardNumber)
+            }
+            
+            
+        },
+        components: {
+            AppAlert,
+            AppMap,
+            TheMask
         },
     }
 </script>
@@ -274,24 +203,22 @@ import { constants } from 'crypto';
         margin: 10px;
     }
     .sp-content .sp-content-block2 > p{
-        margin: 0;
+        margin: 10px;
     }
-    .sp-content > div:nth-child(2n){
-        /* grid-area: b; */
-        /* width: 60%; */
+    .sp-content > div:nth-child(1){
+        grid-area: a;
+    }
+    .sp-content > div:nth-child(2){
+        grid-area: b;
     }
     .sp-content{
         width: 740px;
         display: grid;
-        --auto-grid-min-size: 300px;
-        grid-template-columns: repeat(auto-fill, minmax(var(--auto-grid-min-size), 1fr));
+        /* --auto-grid-min-size: 300px;
+        grid-template-columns: repeat(auto-fill, minmax(var(--auto-grid-min-size), 1fr)); */
+        grid-template-areas: 'a b';
         margin-bottom: 10%;
-    }
-    .sp-content-block1{
-        width: 300px;
-    }
-    .sp-content-block2{
-        width: 400px;
+        grid-template-columns: 1fr 2fr;
     }
     .sp-content-block2 > .deleteA{
         float: right;
@@ -344,7 +271,7 @@ import { constants } from 'crypto';
         margin-top: 20px;
     }
     .addNewAddress form > input, .addNewCard input{
-        width: 36%;
+        width: 140px;
         padding: 5px;
         margin: 5px 7% 10px 0;
     }
@@ -352,15 +279,16 @@ import { constants } from 'crypto';
         width: 90%;
     } */
     .addNewAddress .allBtn, .addNewCard .allBtn{
-        width: 40%;
+        width: 155px;
         margin-right: 7%;
+        margin-bottom: 10px;
     }
     .sect-profile input, .addNewCard input{
         border-radius: 10px;
         border: 2px solid #F4F5FA;
         padding: 5px 10px 5px 20px;
     }
-    .addNewAddress input[placeholder="Улица"]{
+    .addNewAddress input[placeholder="Ул."], .addNewAddress input[placeholder="Street"]{
         width: 330px;
         margin-bottom: 5px;
     }
@@ -378,33 +306,92 @@ import { constants } from 'crypto';
         padding-left: 5px;
         padding-right: 5px;
     }
+    .cardImg{
+        position: absolute;
+        left: 350px;
+        top: 10px;
+    }
+    .showDelete{
+        display: none;
+    }
+    @media (max-width: 1400px){
+        .addresses-map-block {
+            position: static;
+            margin-left: 0;
+            /* top: 0;
+            width: 100%;
+            height: 400px;
+            margin-left: 105%; */
+        }
+    }
     @media (max-width: 768px){
         .sp-content{
-            width: 600px;
-            --auto-grid-min-size: 300px;
-            grid-template-columns: 1fr 2fr;
+            width: 100%;
+            grid-template-areas: 'a'
+                                 'b';
+            grid-template-columns: 1fr;
+            grid-template-rows: 1fr 1fr;
+            grid-gap: 0;
         }
+        /* .sp-content .sp-content-block1, .sp-content .sp-content-block1 p{
+            width: 90%;
+        }
+        .sp-content .sp-content-block2, .sp-content .sp-content-block2 p{
+            width: 90%;
+        } */
     }
     @media (max-width: 650px){
         .sp-content{
-            width: 510px;
+            /* width: 510px; */
+        }
+        .addresses-map-block {
+            width: 90%;
         }
     }
     @media (max-width: 579px){
         .sp-content{
-            width: 400px;
+            /* width: 400px;
             --auto-grid-min-size: 400px;
             grid-template-columns: repeat(auto-fill, minmax(var(--auto-grid-min-size), 1fr));
-            grid-row-gap: 10px;
+            grid-row-gap: 10px; */
         }
     }
     @media (max-width: 450px){
-        .sp-content{
-            width: 300px;
-            --auto-grid-min-size: 300px;
-            grid-template-columns: repeat(auto-fill, minmax(var(--auto-grid-min-size), 1fr));
-            grid-row-gap: 10px;
+        .showDelete{
+            display: block;
+        }
+        .hideDelete{
+            display: none;
+        }
+        .addNewCard .card{
+            width: 280px;
+        }
+        .sp-content-block2 .bankCardVisa, .sp-content-block2 .bankCardMasterCard{
+            padding: 10px 0 10px 10px;
+            max-width: 250px;
+        }
+        .sp-content-block2 > .deleteA{
+            margin-top: 10px;
+        }
+        .addNewAddress input[placeholder="Улица"]{
+            width: 280px;
+            padding-left: 15px;
+        }
+        .addNewAddress form > input, .addNewCard input{
+            width: 125px;
+        }
+        .addNewAddress .allBtn, .addNewCard .allBtn{
+            width: 139px;
         }
         
+    }
+    @media (max-width: 359px){
+        .sp-content .sp-content-block2 > p{
+            max-width: 90%;
+        }
+        .addNewAddress form > input, .addNewCard input{
+            width: 280px;
+            padding-left: 15px;
+        }
     }
 </style>

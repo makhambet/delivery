@@ -1,5 +1,5 @@
 <template>
-    <div class="header">
+    <div class="header" :class="{ headerActive: headerActive}">
         <header-download></header-download>
         <header-block1></header-block1>
         <header-block2></header-block2>
@@ -23,13 +23,25 @@
                 // counter: this.$store.getters.BASKET_COUNT,
                 searchModel: '',
                 isActive: false,
+                headerActive: false
             }
         },
         
         methods: {  
             actived(){
                 this.isActive = !this.isActive
-            }
+            },
+            headerScroll() {
+                if(window.scrollY > 40){
+                    this.headerActive = true
+                }
+                else{
+                    this.headerActive = false
+                }
+            },
+        },
+        mounted () {
+            window.addEventListener('scroll', this.headerScroll)
         },
         components: {
             HeaderDownload,

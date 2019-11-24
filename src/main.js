@@ -9,7 +9,14 @@ import AccountKit from 'vue-facebook-account-kit'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import './help/ml'
 
-Vue.use(AccountKit)
+Vue.use(AccountKit, {
+  init: {
+    appId:"992075960963748", 
+    state:"{{csrf}}", 
+    version:"v1.0",
+    fbAppEventsEnabled:true,
+  }
+})
 Vue.use(Vuelidate)
  
 Vue.use(VueGoogleMaps, {
@@ -32,8 +39,7 @@ new Vue({
   store,
   render: h => h(App),
   created () {
-    localStorage.clear();
-    console.log(localStorage)
+    // localStorage.clear();
       this.$store.dispatch('GET_SEARCH', {
         params: {
             text: this.searchModel

@@ -80,7 +80,6 @@
                         },
                     })
                     .then(response => { 
-                        console.log(response)
                         this.$store.dispatch('GET_BASKET_LIST')
                         this.visible = true
                         setTimeout(() => {
@@ -88,7 +87,7 @@
                         }, 1000);
                     })
                     .catch(error => {
-                        console.log(error.response)
+                        
                     });
                 }
             },
@@ -107,7 +106,7 @@
                 }
             },
             toRegistr(){
-                if(this.total_price() < 5000) {
+                if(this.total_price() < 7000) {
                     this.exceed = true;
                 }
                 else{

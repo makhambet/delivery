@@ -69,6 +69,7 @@
                                     <div class="chosen"  @click="favorite(item.id, item.in_favorite)" :class="{'heartActive': item.heart }">
                                         <i class="far fa-heart" :class="{'fas': item.in_favorite}"></i>
                                     </div>
+                                    <i v-show="item.in_favorite" class="fas fa-heart full_heart"></i>
                                     <div 
                                         v-if="item.images[0] !== undefined"
                                         class="s1-prod-img" 
@@ -101,7 +102,11 @@
                                                 <div class="s2-grid-price">
                                                     {{item.price}} {{$ml.get('tenge')}}
                                                 </div>
-                                                <a @click="added(item.id)"><img src="../assets/images/basket.png" alt=""></a>
+                                                <a @click="add(item.id)">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="26.677" height="23.122" viewBox="0 0 26.677 23.122">
+                                                        <path :style="{fill: item.in_basket === true ? 'red' : ''}" id="basket" d="M19.664,23.122H7.011a3.384,3.384,0,0,1-3.317-2.735L1.535,9.246H.69a.69.69,0,1,1,0-1.38H5.034L7.5.472A.69.69,0,0,1,8.808.909L6.489,7.867H20.2L17.879.909a.693.693,0,0,1,.437-.873A.68.68,0,0,1,18.535,0a.691.691,0,0,1,.654.472l2.464,7.395h4.334a.69.69,0,0,1,0,1.38h-.847l-2.158,11.14A3.384,3.384,0,0,1,19.664,23.122ZM2.94,9.246,5.048,20.123a2,2,0,0,0,1.963,1.619H19.664a2,2,0,0,0,1.963-1.619L23.734,9.246Zm15.58,10a.806.806,0,0,1-.1-.006.693.693,0,0,1-.579-.786l.919-6.134a.7.7,0,0,1,.69-.586.688.688,0,0,1,.675.791L19.2,18.664A.685.685,0,0,1,18.52,19.25Zm-10.363,0a.685.685,0,0,1-.682-.586l-.919-6.135a.689.689,0,0,1,.58-.784.706.706,0,0,1,.1-.008.691.691,0,0,1,.681.588l.92,6.134a.693.693,0,0,1-.581.786A.72.72,0,0,1,8.157,19.25Zm7.061-.04a.69.69,0,0,1-.69-.689V12.467a.69.69,0,1,1,1.38,0v6.054A.69.69,0,0,1,15.218,19.21Zm-3.76,0a.69.69,0,0,1-.69-.689V12.467a.69.69,0,1,1,1.38,0v6.054A.69.69,0,0,1,11.458,19.21Z" fill="#515c6f"/>
+                                                    </svg>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -195,6 +200,7 @@
                 if(localStorage.delivery_login === 'true'){
                     setTimeout(() => {
                         this.$store.dispatch('GET_BASKET_LIST')
+                        this.$store.dispatch('GET_SIMILAR', this.id.toString());
                     }, 100);
                     this.$store.dispatch('POST_ADD_BASKET', {
                         product_id: id,
@@ -217,14 +223,13 @@
                 this.count++;
             },
             favorite(id, isFav){
-                console.log(isFav)
                 if(localStorage.delivery_login === 'true'){
-                    console.log(id)
                     this.$store.dispatch('POST_FAVORITE', {
                         product_id: id
                     })
                     setTimeout(() => {
-                        this.$store.dispatch('GET_PRODUCT_SHOW', this.id)
+                        this.$store.dispatch('GET_PRODUCT_SHOW', this.id);
+                        this.$store.dispatch('GET_SIMILAR', this.id.toString());
                     }, 100);
                     let title;
                     if(isFav){
@@ -264,7 +269,6 @@
         },
         created () {
             let count = parseInt(this.page) + 1
-            console.log("count = " + count )
             this.$store.dispatch('GET_PRODUCT_SHOW', this.id);
         },
     }
